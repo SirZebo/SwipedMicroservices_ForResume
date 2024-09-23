@@ -3,9 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.34929.205
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{97AD7376-585C-4A3D-9630-1EE020512AB9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bid", "Bid", "{DE3ADFAE-74A8-4DF2-A668-07791F480172}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bid.API", "Services\Bid\Bid.API\Bid.API.csproj", "{6CFF6D3F-6CE6-44BA-823E-AD056DA03793}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6CFF6D3F-6CE6-44BA-823E-AD056DA03793}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CFF6D3F-6CE6-44BA-823E-AD056DA03793}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CFF6D3F-6CE6-44BA-823E-AD056DA03793}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CFF6D3F-6CE6-44BA-823E-AD056DA03793}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DE3ADFAE-74A8-4DF2-A668-07791F480172} = {97AD7376-585C-4A3D-9630-1EE020512AB9}
+		{6CFF6D3F-6CE6-44BA-823E-AD056DA03793} = {DE3ADFAE-74A8-4DF2-A668-07791F480172}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {036BDDC3-E964-4D67-9743-40D15337B71F}
