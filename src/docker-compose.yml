@@ -4,5 +4,12 @@ services:
   catalogdb:
     image: postgres
 
+  auction.api:
+    image: ${DOCKER_REGISTRY-}auctionapi
+    build:
+      context: .
+      dockerfile: Services/Auction/Auction.API/Dockerfile
+
 volumes:
   postgres_auction:    
+
