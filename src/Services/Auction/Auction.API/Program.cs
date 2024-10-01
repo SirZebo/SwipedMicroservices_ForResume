@@ -1,15 +1,18 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Services to the container. - builder.AddServices()
-builder.Services.AddCarter();
+
 // Automatically does DI of our handlers through assembly reflection
+var assembly = typeof(Program).Assembly;
 builder.Services.AddMediatR(config =>
 {
-    config.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    config.RegisterServicesFromAssembly(assembly);
     config.AddOpenBehavior(typeof(ValidationBehavior<,>));
 });
 
-builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+builder.Services.AddValidatorsFromAssembly(assembly);
+
+builder.Services.AddCarter();
 
 builder.Services.AddMarten(opts =>
 {
