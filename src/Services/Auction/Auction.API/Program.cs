@@ -1,4 +1,6 @@
 using BuildingBlocks.Exceptions.Handler;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,11 +27,20 @@ builder.Services.AddMarten(opts =>
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
+builder.Services.AddHealthChecks()
+    .AddNpgSql(builder.Configuration.GetConnectionString("Database")!);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline automatically instead of DI in every time a new endpoint is created
 app.MapCarter();
 
 app.UseExceptionHandler(options => { });
+
+app.UseHealthChecks("/health",
+    new HealthCheckOptions
+    {
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
 
 app.Run();
