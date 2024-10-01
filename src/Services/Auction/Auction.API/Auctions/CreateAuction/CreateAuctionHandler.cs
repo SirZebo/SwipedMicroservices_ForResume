@@ -3,7 +3,7 @@
 public record CreateAuctionCommand(string Name, List<string> Category, string Description, string ImageFile, DateTime EndingDate, decimal Price)
     : ICommand<CreateAuctionResult>;
 
-public record CreateAuctionResult(Guid id);
+public record CreateAuctionResult(Guid Id);
 
 public class CreateAuctionCommandValidator : AbstractValidator<CreateAuctionCommand>
 {
