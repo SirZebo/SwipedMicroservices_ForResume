@@ -29,14 +29,12 @@ public class CreateAuctionCommandValidator : AbstractValidator<CreateAuctionComm
 
 }
 internal class CreateAuctionCommandHandler
-    (IDocumentSession session, ILogger<CreateAuctionCommandHandler> logger)
+    (IDocumentSession session)
     : ICommandHandler<CreateAuctionCommand, CreateAuctionResult>
 {
     // Business logic to create a product
     public async Task<CreateAuctionResult> Handle(CreateAuctionCommand command, CancellationToken cancellationToken)
     {
-        logger.LogInformation("CreateAuctionCommandHandler.Handle called with {@Command}", command);
-
         var auction = new Models.Auction
         {
             Name = command.Name,
