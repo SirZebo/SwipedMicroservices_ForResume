@@ -4,6 +4,9 @@ services:
   auctiondb:
     image: postgres
 
+  biddb:
+    image: mcr.microsoft.com/mssql/server
+
   auction.api:
     image: ${DOCKER_REGISTRY-}auctionapi
     build:
