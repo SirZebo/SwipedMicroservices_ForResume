@@ -19,4 +19,5 @@ public class Bid : Aggregate<BidId>
 
         return bid;
     }
+
 }

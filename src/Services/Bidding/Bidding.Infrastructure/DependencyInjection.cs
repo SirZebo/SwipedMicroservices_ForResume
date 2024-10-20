@@ -21,6 +21,9 @@ public static class DependencyInjection
             options.UseSqlServer(connectionString);
         });
 
+        services.AddScoped<IBiddingRepository, BiddingRepository>();
+        services.Decorate<IBiddingRepository, CachedBiddingRepository>();
+
 
 
 
