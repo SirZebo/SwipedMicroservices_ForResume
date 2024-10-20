@@ -1,20 +1,13 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Service
 metadata:
   name: bidding-service
 spec:
-  replicas: 3
   selector:
-    matchLabels:
-      app: bidding-service
-  template:
-    metadata:
-      labels:
-        app: bidding-service
-    spec:
-      containers:
-        - name: bidding-service
-          image: bidding-service:latest
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 80
+    app: bidding-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      nodePort: 30080
+  type: NodePort
