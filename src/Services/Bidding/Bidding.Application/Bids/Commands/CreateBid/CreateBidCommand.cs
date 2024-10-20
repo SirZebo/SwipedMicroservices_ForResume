@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Bidding.Application.Bids.Commands.CreateBid;
 public record CreateBidCommand(BidDto Bid)

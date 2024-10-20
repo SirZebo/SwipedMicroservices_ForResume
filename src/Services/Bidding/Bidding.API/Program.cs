@@ -15,6 +15,8 @@ builder.Services
 var app = builder.Build();
 
 // Configure the HTTP request pipeline automatically instead of DI in every time a new endpoint is created
+app.UseApiServices();
+
 if (app.Environment.IsDevelopment())
 {
     await app.InitialiseDatabaseAsync();
