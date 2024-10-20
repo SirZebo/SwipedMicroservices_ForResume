@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using Bidding.Application.Data;
+using System.Collections.Concurrent;
 
 namespace Bidding.Infrastructure.Data;
 public class CachedBiddingRepository

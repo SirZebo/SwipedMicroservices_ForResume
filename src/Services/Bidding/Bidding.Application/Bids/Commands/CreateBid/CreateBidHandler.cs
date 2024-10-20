@@ -7,7 +7,7 @@ namespace Bidding.Application.Bids.Commands.CreateBid;
 
 
 public class CreateBidCommandHandler
-    (IApplicationDbContext dbContext)
+    (IApplicationDbContext dbContext, IBiddingRepository dbBiddingContext)
     : ICommandHandler<CreateBidCommand, CreateBidResult>
 {
     private static readonly ConcurrentDictionary<AuctionId, SemaphoreSlim> auctionLocks = new();
@@ -32,16 +32,14 @@ public class CreateBidCommandHandler
         await auctionLocks[auctionId].WaitAsync(cancellationToken);
         try
         {
-            var highestbid = await dbContext.Bids
-                .Where(b => auctionId == b.AuctionId)
-                .MaxAsync(b => b.Price);
+            var highestBid = await dbBiddingContext.GetHighestBid(auctionId, cancellationToken);
 
             if (!(auction.EndingDate > DateTime.UtcNow))
             {
                 throw new AuctionAlreadyEndedException(command.Bid.AuctionId);
             }
 
-            if (!(command.Bid.Price > highestbid))
+            if (!(command.Bid.Price > highestBid.Price))
             {
                 throw new InvalidBidPriceException(command.Bid.AuctionId, command.Bid.CustomerId, command.Bid.Price);
             }
@@ -49,7 +47,7 @@ public class CreateBidCommandHandler
             bid = CreateNewBid(command.Bid);
 
             dbContext.Bids.Add(bid);
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await dbBiddingContext.StoreBid(bid, cancellationToken);
         }
         finally
         {
