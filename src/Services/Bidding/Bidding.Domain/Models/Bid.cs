@@ -1,9 +1,9 @@
 ﻿namespace Bidding.Domain.Models;
 public class Bid : Aggregate<BidId>
 {
-    public AuctionId AuctionId { get; set; }
-    public CustomerId CustomerId { get; set; }
-    public decimal Price { get; set; }
+    public AuctionId AuctionId { get; private set; } = default!;
+    public CustomerId CustomerId { get; private set; } = default!;
+    public decimal Price { get; private set; } = default!;
 
     public static Bid Create(BidId id, AuctionId auctionId, CustomerId customerId, decimal price)
     {
@@ -19,4 +19,5 @@ public class Bid : Aggregate<BidId>
 
         return bid;
     }
+
 }

@@ -1,0 +1,10 @@
+﻿global using Bidding.Domain.Models;
+global using Bidding.Domain.ValueObjects;
+global using BuildingBlocks.CQRS;
+global using Bidding.Application.Data;
+global using Bidding.Application.Dtos;
+global using Bidding.Application.Exceptions;
+global using MediatR;
+global using Microsoft.Extensions.Logging;
+global using Bidding.Domain.Events;
+global using Microsoft.EntityFrameworkCore;
