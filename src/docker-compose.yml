@@ -13,13 +13,6 @@ services:
       context: .
       dockerfile: Services/Auction/Auction.API/Dockerfile
 
-  bidding.api:
-    image: ${DOCKER_REGISTRY-}biddingapi
-    build:
-      context: .
-      dockerfile: Services/Bidding/Bidding.API/Dockerfile
-
 volumes:
   postgres_auction:    
-
 
