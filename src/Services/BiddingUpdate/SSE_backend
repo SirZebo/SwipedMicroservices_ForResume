@@ -72,6 +72,10 @@ app.get('/api/auctions/:id/bids/updates', (req, res) => {
     });
 });
 
+app.get('/', (req, res) => {
+    res.send('Welcome to the Auction System API');
+  });
+
 // API to place a bid
 app.post('/api/auctions/:id/bids', (req, res) => {
     const auctionId = req.params.id;
