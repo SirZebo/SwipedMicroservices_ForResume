@@ -12,6 +12,10 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/Bidding/Bidding.API/Bidding.API.csproj", "Services/Bidding/Bidding.API/"]
+COPY ["Services/Bidding/Bidding.Application/Bidding.Application.csproj", "Services/Bidding/Bidding.Application/"]
+COPY ["BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "BuildingBlocks/BuildingBlocks/"]
+COPY ["Services/Bidding/Bidding.Domain/Bidding.Domain.csproj", "Services/Bidding/Bidding.Domain/"]
+COPY ["Services/Bidding/Bidding.Infrastructure/Bidding.Infrastructure.csproj", "Services/Bidding/Bidding.Infrastructure/"]
 RUN dotnet restore "./Services/Bidding/Bidding.API/Bidding.API.csproj"
 COPY . .
 WORKDIR "/src/Services/Bidding/Bidding.API"

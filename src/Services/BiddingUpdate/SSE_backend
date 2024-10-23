@@ -1,0 +1,139 @@
+const express = require('express');
+const cors = require('cors');
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// Set the port
+const PORT = process.env.PORT || 5002;  // HTTP port
+
+// In-memory data store
+let auctions = [
+    {
+        id: '1',
+        title: 'Vintage Watch',
+        description: 'A beautiful vintage watch from 1950s.',
+        startPrice: 100,
+        currentBid: 150,
+        bids: [
+            { bidder: 'Alice', newBid: 120, timestamp: Date.now() - 60000 },
+            { bidder: 'Bob', newBid: 150, timestamp: Date.now() - 30000 },
+        ],
+        endTime: Date.now() + 600000 // 10 minutes from now
+    },
+    {
+        id: '2',
+        title: 'Antique Vase',
+        description: 'An exquisite antique vase with intricate designs.',
+        startPrice: 200,
+        currentBid: 250,
+        bids: [
+            { bidder: 'Charlie', newBid: 220, timestamp: Date.now() - 120000 },
+            { bidder: 'Dave', newBid: 250, timestamp: Date.now() - 60000 },
+        ],
+        endTime: Date.now() + 1200000 // 20 minutes from now
+    },
+];
+
+// SSE clients
+let clients = {};
+
+// API to get all auctions
+app.get('/api/auctions', (req, res) => {
+    res.json(auctions);
+});
+
+// API to get a specific auction
+app.get('/api/auctions/:id', (req, res) => {
+    const auction = auctions.find(a => a.id === req.params.id);
+    if (auction) {
+        res.json(auction);
+    } else {
+        res.status(404).json({ message: 'Auction not found' });
+    }
+});
+
+// SSE endpoint for bid updates
+app.get('/api/auctions/:id/bids/updates', (req, res) => {
+    const auctionId = req.params.id;
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
+
+    if (!clients[auctionId]) {
+        clients[auctionId] = [];
+    }
+    clients[auctionId].push(res);
+
+    req.on('close', () => {
+        clients[auctionId] = clients[auctionId].filter(client => client !== res);
+    });
+});
+
+app.get('/', (req, res) => {
+    res.send('Welcome to the Auction System API');
+  });
+
+// API to place a bid
+app.post('/api/auctions/:id/bids', (req, res) => {
+    const auctionId = req.params.id;
+    const { bid, bidder } = req.body; // Assuming bidder name is sent
+
+    const auction = auctions.find(a => a.id === auctionId);
+    if (!auction) {
+        return res.status(404).json({ message: 'Auction not found' });
+    }
+
+    if (bid <= auction.currentBid) {
+        return res.status(400).json({ message: 'Bid must be higher than current bid' });
+    }
+
+    // Update auction
+    auction.currentBid = bid;
+    const newBid = {
+        bidder: bidder || 'Anonymous',
+        newBid: bid,
+        timestamp: Date.now()
+    };
+    auction.bids.push(newBid);
+
+    // Send SSE to all clients listening to this auction
+    if (clients[auctionId]) {
+        clients[auctionId].forEach(client => {
+            client.write(`data: ${JSON.stringify(newBid)}\n\n`);
+        });
+    }
+
+    res.status(201).json(newBid);
+});
+
+// Simulate bid updates for testing
+setInterval(() => {
+    auctions.forEach(auction => {
+        if (Date.now() >= auction.endTime) return; // Skip if auction ended
+
+        // Simulate a new bid
+        const simulatedBid = auction.currentBid + Math.floor(Math.random() * 50) + 10;
+        auction.currentBid = simulatedBid;
+        const newBid = {
+            bidder: 'System',
+            newBid: simulatedBid,
+            timestamp: Date.now()
+        };
+        auction.bids.push(newBid);
+
+        // Send SSE to all clients listening to this auction
+        if (clients[auction.id]) {
+            clients[auction.id].forEach(client => {
+                client.write(`data: ${JSON.stringify(newBid)}\n\n`);
+            });
+        }
+    });
+}, 10000); // Every 10 seconds
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});
