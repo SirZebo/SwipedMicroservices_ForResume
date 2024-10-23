@@ -19,13 +19,15 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bidding", "Bidding", "{5B5F6EDC-DA9C-4291-9C43-C035650E4780}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bidding.API", "Services\Bidding\Bidding.API\Bidding.API.csproj", "{98A0FD28-7A92-4432-ABEC-DB291F76728C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bidding.API", "Services\Bidding\Bidding.API\Bidding.API.csproj", "{98A0FD28-7A92-4432-ABEC-DB291F76728C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bidding.Application", "Services\Bidding\Bidding.Application\Bidding.Application.csproj", "{A439DBF1-90BF-4527-9DBC-88C085A3E1B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bidding.Application", "Services\Bidding\Bidding.Application\Bidding.Application.csproj", "{A439DBF1-90BF-4527-9DBC-88C085A3E1B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bidding.Infrastructure", "Services\Bidding\Bidding.Infrastructure\Bidding.Infrastructure.csproj", "{6C6C5914-33F2-4476-BA2D-9A653C0F164C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bidding.Infrastructure", "Services\Bidding\Bidding.Infrastructure\Bidding.Infrastructure.csproj", "{6C6C5914-33F2-4476-BA2D-9A653C0F164C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bidding.Domain", "Services\Bidding\Bidding.Domain\Bidding.Domain.csproj", "{5F5E6513-675E-4115-B7FF-14EE4B819F60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bidding.Domain", "Services\Bidding\Bidding.Domain\Bidding.Domain.csproj", "{5F5E6513-675E-4115-B7FF-14EE4B819F60}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApps", "WebApps", "{E68DFE60-8426-45A4-8BA5-09DE140068E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
