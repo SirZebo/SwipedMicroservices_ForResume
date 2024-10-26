@@ -8,5 +8,5 @@ public class Auction
     public string Description { get; set; } = default!;
     public string ImageFile { get; set; } = default!;
     public DateTime EndingDate { get; set; }
-    public decimal Price { get; set; }
+    public decimal StartingPrice { get; set; }
 }

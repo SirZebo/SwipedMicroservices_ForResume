@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bidding.Domain", "Services\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApps", "WebApps", "{E68DFE60-8426-45A4-8BA5-09DE140068E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingBlocks.Messaging", "BuildingBlocks\BuildingBlocks.Messaging\BuildingBlocks.Messaging.csproj", "{D9AB99F1-C636-4F96-9288-B57226787966}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{5F5E6513-675E-4115-B7FF-14EE4B819F60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F5E6513-675E-4115-B7FF-14EE4B819F60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F5E6513-675E-4115-B7FF-14EE4B819F60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9AB99F1-C636-4F96-9288-B57226787966}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9AB99F1-C636-4F96-9288-B57226787966}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9AB99F1-C636-4F96-9288-B57226787966}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9AB99F1-C636-4F96-9288-B57226787966}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +83,7 @@ Global
 		{A439DBF1-90BF-4527-9DBC-88C085A3E1B2} = {5B5F6EDC-DA9C-4291-9C43-C035650E4780}
 		{6C6C5914-33F2-4476-BA2D-9A653C0F164C} = {5B5F6EDC-DA9C-4291-9C43-C035650E4780}
 		{5F5E6513-675E-4115-B7FF-14EE4B819F60} = {5B5F6EDC-DA9C-4291-9C43-C035650E4780}
+		{D9AB99F1-C636-4F96-9288-B57226787966} = {D78AA2FE-8FDA-4079-9BB7-51A036D76FC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {036BDDC3-E964-4D67-9743-40D15337B71F}

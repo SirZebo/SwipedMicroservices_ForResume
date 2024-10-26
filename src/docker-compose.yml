@@ -7,6 +7,9 @@ services:
   biddb:
     image: mcr.microsoft.com/mssql/server
 
+  messagebroker:
+    image: rabbitmq:management
+
   auction.api:
     image: ${DOCKER_REGISTRY-}auctionapi
     build:

@@ -1,6 +1,9 @@
-﻿namespace Auction.API.Auctions.CreateAuction;
+﻿using BuildingBlocks.Messaging.Events;
+using MassTransit;
 
-public record CreateAuctionCommand(string Name, List<string> Category, string Description, string ImageFile, DateTime EndingDate, decimal Price)
+namespace Auction.API.Auctions.CreateAuction;
+
+public record CreateAuctionCommand(string Name, List<string> Category, string Description, string ImageFile, DateTime EndingDate, decimal StartingPrice)
     : ICommand<CreateAuctionResult>;
 
 public record CreateAuctionResult(Guid Id);
@@ -19,7 +22,7 @@ public class CreateAuctionCommandValidator : AbstractValidator<CreateAuctionComm
         RuleFor(x => x.ImageFile)
             .NotEmpty().WithMessage("ImageFile is required");
 
-        RuleFor(x => x.Price)
+        RuleFor(x => x.StartingPrice)
             .GreaterThan(0).WithMessage("Price must be greater than 0");
 
         RuleFor(x => x.EndingDate)
@@ -29,7 +32,7 @@ public class CreateAuctionCommandValidator : AbstractValidator<CreateAuctionComm
 
 }
 internal class CreateAuctionCommandHandler
-    (IDocumentSession session)
+    (IDocumentSession session, IPublishEndpoint publishEndpoint)
     : ICommandHandler<CreateAuctionCommand, CreateAuctionResult>
 {
     // Business logic to create a product
@@ -42,12 +45,19 @@ internal class CreateAuctionCommandHandler
             Description = command.Description,
             ImageFile = command.ImageFile,
             EndingDate = command.EndingDate,
-            Price = command.Price
+            StartingPrice = command.StartingPrice
         };
+
+        
 
         // save to database
         session.Store(auction);
         await session.SaveChangesAsync(cancellationToken);
+
+        var eventMessage = auction.Adapt<AuctionCreatedEvent>();
+        eventMessage.Id = auction.Id;
+
+        await publishEndpoint.Publish(eventMessage, cancellationToken);
 
         // return result
         return new CreateAuctionResult(auction.Id);

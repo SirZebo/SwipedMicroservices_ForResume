@@ -1,14 +1,14 @@
 ﻿using FluentValidation;
 
 namespace Bidding.Application.Bids.Commands.CreateBid;
-public record CreateBidCommand(BidDto Bid)
-    : ICommand<CreateBidResult>;
+public record UpdateBidCommand(BidDto Bid)
+    : ICommand<UpdateBidResult>;
 
-public record CreateBidResult(Guid Id);
+public record UpdateBidResult(bool IsSuccess);
 
-public class CreateBidCommandValidator : AbstractValidator<CreateBidCommand>
+public class UpdateBidCommandValidator : AbstractValidator<CreateBidCommand>
 {
-    public CreateBidCommandValidator()
+    public UpdateBidCommandValidator()
     {
         RuleFor(x => x.Bid.Price).GreaterThan(0).WithMessage("Price must be greater than 0");
         RuleFor(x => x.Bid.CustomerId).NotNull().WithMessage("CustomerId is required");

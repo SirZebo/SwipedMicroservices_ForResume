@@ -20,4 +20,12 @@ public class Bid : Aggregate<BidId>
         return bid;
     }
 
+    public void Update(CustomerId customerId, decimal price)
+    {
+        CustomerId = customerId;
+        Price = price;
+
+        AddDomainEvent(new BidUpdatedEvent(this));
+    }
+
 }
