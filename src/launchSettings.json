@@ -5,7 +5,8 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "auction.api": "StartDebugging",
-        "bidding.api": "StartDebugging"
+        "bidding.api": "StartDebugging",
+        "jobscheduler.api": "StartDebugging"
       }
     }
   }

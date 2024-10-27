@@ -7,6 +7,9 @@ services:
   biddb:
     image: mcr.microsoft.com/mssql/server
 
+  jobschedulerdb:
+    image: mcr.microsoft.com/mssql/server
+
   messagebroker:
     image: rabbitmq:management
 
@@ -22,7 +25,14 @@ services:
       context: .
       dockerfile: Services/Bidding/Bidding.API/Dockerfile
 
+  jobscheduler.api:
+    image: ${DOCKER_REGISTRY-}jobschedulerapi
+    build:
+      context: .
+      dockerfile: Services/JobScheduler/JobScheduler.API/Dockerfile
+
 volumes:
   postgres_auction:    
+
 
 
