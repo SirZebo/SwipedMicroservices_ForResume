@@ -26,9 +26,14 @@ public class UpdateBidCommandHandler
             throw new AuctionNotFoundException(command.Bid.AuctionId);
         }
 
+        // lock auction if its in use, else wait
         var auctionLock = auctionLocks.GetOrAdd(auctionId, (_) => new SemaphoreSlim(1, 1));
+
+        // Keep track of who is using semaphore - for semaphore disposal
         var usage = auctionUsage.GetOrAdd(auctionId, 0);
         auctionUsage[auctionId] = usage + 1;
+
+
         await auctionLocks[auctionId].WaitAsync(cancellationToken);
         try
         {

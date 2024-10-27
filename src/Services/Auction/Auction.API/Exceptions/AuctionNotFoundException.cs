@@ -1,9 +1,9 @@
 ﻿namespace Auction.API.Exceptions;
 
 using BuildingBlocks.Exceptions;
-public class ProductNotFoundException : NotFoundException
+public class AuctionNotFoundException : NotFoundException
 {
-    public ProductNotFoundException(Guid Id) : base("Product", Id)
+    public AuctionNotFoundException(Guid Id) : base("Product", Id)
     {
     }
 }
