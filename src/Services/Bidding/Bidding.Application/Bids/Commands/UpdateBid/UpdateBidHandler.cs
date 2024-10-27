@@ -44,10 +44,9 @@ public class UpdateBidCommandHandler
                 throw new InvalidBidPriceException(command.Bid.AuctionId, command.Bid.CustomerId, command.Bid.Price);
             }
 
-            bid = CreateNewBid(command.Bid);
+            UpdateBidWithNewValues(highestBid, command.Bid);
 
-            dbContext.Bids.Add(bid);
-            await dbBiddingContext.StoreBid(bid, cancellationToken);
+            await dbBiddingContext.StoreBid(highestBid, cancellationToken);
         }
         finally
         {
@@ -106,15 +105,8 @@ public class UpdateBidCommandHandler
 
 
     }
-    private Bid CreateNewBid(BidDto bidDto)
+    private void UpdateBidWithNewValues(Bid bid, BidDto bidDto)
     {
-        var newBid = Bid.Create(
-            id: BidId.Of(Guid.NewGuid()),
-            customerId: CustomerId.Of(bidDto.CustomerId),
-            auctionId: AuctionId.Of(bidDto.AuctionId),
-            price: bidDto.Price);
-
-        return newBid;
-
+        bid.Update(CustomerId.Of(bidDto.CustomerId), bidDto.Price);
     }
 }

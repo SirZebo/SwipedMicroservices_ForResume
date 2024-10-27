@@ -13,21 +13,20 @@ public class AuctionCreatedEventHandler
     public async Task Consume(ConsumeContext<AuctionCreatedEvent> context)
     {
         logger.LogInformation("Integration Event handled: {IntegrationEvent}", context.Message.GetType().Name);
-        logger.LogInformation("Integration Event handled: {Id}", context.Message.Id);
         var auction = MapToAuction(context.Message);
         dbContext.Auctions.Add(auction);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync(context.CancellationToken);
         
-        var command = MapToCreateBidCommand(context.Message.Id);
-        await sender.Send(command);
+        var command = MapToCreateBidCommand(context.Message);
+        CreateBidResult createBidResult = await sender.Send(command);
     }
 
-    private CreateBidCommand MapToCreateBidCommand(Guid auctionId)
+    private CreateBidCommand MapToCreateBidCommand(AuctionCreatedEvent message)
     {
         var bidDto = new BidDto
         (
             Id: new Guid(),
-            AuctionId: auctionId,
+            AuctionId: message.AuctionId,
             CustomerId: new Guid(),
             Price: 0
         );
@@ -36,7 +35,7 @@ public class AuctionCreatedEventHandler
 
     private Auction MapToAuction(AuctionCreatedEvent message)
     {
-        var auction = Auction.Create(AuctionId.Of(message.Id), message.Name, message.StartingPrice, message.EndingDate);
+        var auction = Auction.Create(AuctionId.Of(message.AuctionId), message.Name, message.StartingPrice, message.EndingDate);
         return auction;
     }
 

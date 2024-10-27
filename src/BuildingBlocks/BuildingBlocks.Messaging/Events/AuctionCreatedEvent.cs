@@ -1,7 +1,7 @@
 ﻿namespace BuildingBlocks.Messaging.Events;
-public class AuctionCreatedEvent
+public record AuctionCreatedEvent : IntegrationEvent
 {
-    public Guid Id { get; set; }
+    public Guid AuctionId { get; set; }
     public string Name { get; set; } = default!;
     public DateTime EndingDate { get; set; }
     public decimal StartingPrice { get; set; }

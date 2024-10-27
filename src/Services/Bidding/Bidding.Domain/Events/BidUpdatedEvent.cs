@@ -1,3 +1,3 @@
 ﻿namespace Bidding.Domain.Events;
-public record BidUpdatedEvent(Bid Order) : IDomainEvent;
+public record BidUpdatedEvent(Bid Bid) : IDomainEvent;
 

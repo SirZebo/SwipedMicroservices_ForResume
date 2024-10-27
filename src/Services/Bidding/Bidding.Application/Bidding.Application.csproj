@@ -16,8 +16,4 @@
 		<ProjectReference Include="..\Bidding.Domain\Bidding.Domain.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Bids\EventHandlers\Domain\" />
-	</ItemGroup>
-
 </Project>

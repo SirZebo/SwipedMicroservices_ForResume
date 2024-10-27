@@ -55,7 +55,7 @@ internal class CreateAuctionCommandHandler
         await session.SaveChangesAsync(cancellationToken);
 
         var eventMessage = auction.Adapt<AuctionCreatedEvent>();
-        eventMessage.Id = auction.Id;
+        eventMessage.AuctionId = auction.Id;
 
         await publishEndpoint.Publish(eventMessage, cancellationToken);
 
