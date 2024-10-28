@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: bidding-service
-          image: bidding-service:latest
-          imagePullPolicy: IfNotPresent
+          image: biddingapi:latest
+          imagePullPolicy: Never
           ports:
-            - containerPort: 8080
+            - containerPort: 5000
