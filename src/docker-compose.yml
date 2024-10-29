@@ -16,23 +16,37 @@ services:
   messagebroker:
     image: rabbitmq:management
 
+
+# Environement is just to force HTTP, can remove if not needed
   auction.api:
     image: ${DOCKER_REGISTRY-}auctionapi
     build:
       context: .
       dockerfile: Services/Auction/Auction.API/Dockerfile
+    environment:
+    - ASPNETCORE_URLS=http://+:5001
+    - ASPNETCORE_ENVIRONMENT=Development
+
 
   bidding.api:
     image: ${DOCKER_REGISTRY-}biddingapi
     build:
       context: .
       dockerfile: Services/Bidding/Bidding.API/Dockerfile
+    environment:
+    - ASPNETCORE_URLS=http://+:5001
+    - ASPNETCORE_ENVIRONMENT=Development
 
   jobscheduler.api:
     image: ${DOCKER_REGISTRY-}jobschedulerapi
     build:
       context: .
       dockerfile: Services/JobScheduler/JobScheduler.API/Dockerfile
+    environment:
+    - ASPNETCORE_URLS=http://+:5001
+    - ASPNETCORE_ENVIRONMENT=Development
+
+
 
 volumes:
   postgres_auction:    
