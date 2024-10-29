@@ -37,4 +37,27 @@ public class AuctionRepository
         await session.SaveChangesAsync(cancellationToken);
         return auction;
     }
+
+    public async Task<Models.Auction> UpdateAuction(Models.Auction newAuction, CancellationToken cancellationToken = default)
+    {
+        var auction = await session.LoadAsync<Models.Auction>(newAuction.Id, cancellationToken);
+        var oldAuction = auction.Adapt<Models.Auction>();
+
+        if (auction is null)
+        {
+            throw new AuctionNotFoundException(newAuction.Id);
+        }
+
+        auction.Name = newAuction.Name;
+        auction.Category = newAuction.Category;
+        auction.Description = newAuction.Description;
+        auction.ImageFile = newAuction.ImageFile;
+        auction.EndingDate = newAuction.EndingDate;
+        auction.StartingPrice = newAuction.StartingPrice;
+
+        session.Update(auction);
+        await session.SaveChangesAsync(cancellationToken);
+
+        return oldAuction;
+    }
 }
