@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
+using System.Text.Json;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,29 +31,46 @@ if (app.Environment.IsDevelopment())
     await app.InitialiseDatabaseAsync();
 }
 
-// Endpoint to assign a node based on auction ID
-app.MapPost("/assign_node", (HttpContext context) =>
+// Endpoint to assign a node based on auction ID from JSON
+app.MapPost("/assign_node", async (HttpContext context) =>
 {
-    var auctionId = context.Request.Form["auction_id"].ToString();
-    var assignedNode = hashRing.GetNode(auctionId);
-    return Results.Json(new { auction_id = auctionId, assigned_node = assignedNode });
+    // Read and deserialize the JSON body
+    var requestBody = await new StreamReader(context.Request.Body).ReadToEndAsync();
+    var data = JsonSerializer.Deserialize<Dictionary<string, string>>(requestBody);
+
+    // Retrieve auction_id if present, otherwise return BadRequest
+    if (data != null && data.ContainsKey("auction_id"))
+    {
+        var auctionId = data["auction_id"];
+        var assignedNode = hashRing.GetNode(auctionId);
+        return Results.Json(new { auction_id = auctionId, assigned_node = assignedNode });
+    }
+    else
+    {
+        return Results.BadRequest("Required parameter 'auction_id' is missing.");
+    }
 });
 
 // Endpoint to add a new node to the hash ring
-app.MapPost("/add_node", (HttpContext context) =>
+app.MapPost("/add_node", async (HttpContext context) =>
 {
-    var node = context.Request.Form["node"].ToString();
+    var requestBody = await new StreamReader(context.Request.Body).ReadToEndAsync();
+    var jsonData = JsonSerializer.Deserialize<Dictionary<string, string>>(requestBody);
+    var node = jsonData["node"];
     hashRing.AddNode(node);
     return Results.Text($"Node {node} added to the ring.");
 });
 
 // Endpoint to remove a node from the hash ring
-app.MapPost("/remove_node", (HttpContext context) =>
+app.MapPost("/remove_node", async (HttpContext context) =>
 {
-    var node = context.Request.Form["node"].ToString();
+    var requestBody = await new StreamReader(context.Request.Body).ReadToEndAsync();
+    var jsonData = JsonSerializer.Deserialize<Dictionary<string, string>>(requestBody);
+    var node = jsonData["node"];
     hashRing.RemoveNode(node);
     return Results.Text($"Node {node} removed from the ring.");
 });
+
 
 // Run the application
 app.Run();
