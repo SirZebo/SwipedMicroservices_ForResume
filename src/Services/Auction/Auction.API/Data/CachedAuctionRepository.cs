@@ -13,14 +13,14 @@ public class CachedAuctionRepository
     //    throw new NotImplementedException();
     //}
 
-    public async Task<Models.Auction> GetAuction(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Models.Auction> GetAuctionById(Guid id, CancellationToken cancellationToken = default)
     {
         var cacheKey = $"auction:{id}";
         var cachedAuction = await cache.GetStringAsync(cacheKey, cancellationToken);
         if (!string.IsNullOrEmpty(cachedAuction)) 
             return JsonSerializer.Deserialize<Models.Auction>(cachedAuction)!;
 
-        var auction = await repository.GetAuction(id, cancellationToken);
+        var auction = await repository.GetAuctionById(id, cancellationToken);
         await cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(auction), cancellationToken);
         return auction;
     }

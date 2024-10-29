@@ -5,14 +5,12 @@ public record GetAuctionByCategoryQuery(string Category) : IQuery<GetAuctionByCa
 public record GetAuctionByCategoryResult(IEnumerable<Models.Auction> Auctions);
 
 public class GetAuctionByCategoryQueryHandler
-    (IDocumentSession session)
+    (IAuctionRepository repository)
     : IQueryHandler<GetAuctionByCategoryQuery, GetAuctionByCategoryResult>
 {
     public async Task<GetAuctionByCategoryResult> Handle(GetAuctionByCategoryQuery query, CancellationToken cancellationToken)
     {
-        var auctions = await session.Query<Models.Auction>()
-            .Where(p => p.Category.Contains(query.Category))
-            .ToListAsync();
+        var auctions = await repository.GetAuctionByCategory(query.Category, cancellationToken);
 
         return new GetAuctionByCategoryResult(auctions);
     }

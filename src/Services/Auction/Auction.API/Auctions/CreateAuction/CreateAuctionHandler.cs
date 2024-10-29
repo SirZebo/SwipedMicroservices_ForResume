@@ -26,13 +26,13 @@ public class CreateAuctionCommandValidator : AbstractValidator<CreateAuctionComm
             .GreaterThan(0).WithMessage("Price must be greater than 0");
 
         RuleFor(x => x.EndingDate)
-            .GreaterThan(DateTime.UtcNow.AddDays(1)).WithMessage("EndingDate must be at least 1 day later")
+            .GreaterThan(DateTime.UtcNow.AddSeconds(1)).WithMessage("EndingDate must be at least 1 day later")
             .LessThan(DateTime.UtcNow.AddMonths(3)).WithMessage("EndingDate must be less than 3 months");
     }
 
 }
 internal class CreateAuctionCommandHandler
-    (IDocumentSession session, IPublishEndpoint publishEndpoint)
+    (IAuctionRepository repository, IPublishEndpoint publishEndpoint)
     : ICommandHandler<CreateAuctionCommand, CreateAuctionResult>
 {
     // Business logic to create a product
@@ -48,11 +48,8 @@ internal class CreateAuctionCommandHandler
             StartingPrice = command.StartingPrice
         };
 
-        
-
         // save to database
-        session.Store(auction);
-        await session.SaveChangesAsync(cancellationToken);
+        await repository.StoreAuction(auction);
 
         var eventMessage = auction.Adapt<AuctionCreatedEvent>();
         eventMessage.AuctionId = auction.Id;

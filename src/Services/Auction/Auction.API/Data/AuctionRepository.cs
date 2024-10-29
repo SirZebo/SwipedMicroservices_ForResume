@@ -7,7 +7,7 @@ public class AuctionRepository
     (IDocumentSession session)
     : IAuctionRepository
 {
-    public async Task<Models.Auction> GetAuction(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Models.Auction> GetAuctionById(Guid id, CancellationToken cancellationToken = default)
     {
         var auction = await session.LoadAsync<Models.Auction>(id, cancellationToken);
 
@@ -23,10 +23,10 @@ public class AuctionRepository
         return auctions;
     }
 
-    public async Task<IEnumerable<Models.Auction>> GetAuctions(int pageNumber = 1, int pageSize = 10, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Models.Auction>> GetAuctions(CancellationToken cancellationToken = default)
     {
         var auctions = await session.Query<Models.Auction>()
-            .ToPagedListAsync(pageNumber, pageSize, cancellationToken);
+            .ToListAsync(cancellationToken);
 
         return auctions;
     }
