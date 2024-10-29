@@ -7,12 +7,12 @@ public record GetAuctionByIdQuery(Guid Id) : IQuery<GetAuctionByIdResult>;
 
 public record GetAuctionByIdResult(Models.Auction Auction);
 internal class GetAuctionByIdQueryHandler
-    (IDocumentSession session)
+    (IAuctionRepository repository)
     : IQueryHandler<GetAuctionByIdQuery, GetAuctionByIdResult>
 {
     public async Task<GetAuctionByIdResult> Handle(GetAuctionByIdQuery query, CancellationToken cancellationToken)
     {
-        var auction = await session.LoadAsync<Models.Auction>(query.Id, cancellationToken);
+        var auction = await repository.GetAuctionById(query.Id, cancellationToken);
 
         if (auction is null)
         {

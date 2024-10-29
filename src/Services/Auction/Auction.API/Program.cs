@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using BuildingBlocks.Messaging.MassTransit;
 using Microsoft.Extensions.Options;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Services to the container. - builder.AddServices()
@@ -26,6 +27,13 @@ builder.Services.AddMarten(opts =>
 {
     opts.Connection(builder.Configuration.GetConnectionString("Database")!);
 }).UseLightweightSessions();
+
+builder.Services.AddScoped<IAuctionRepository, AuctionRepository>();
+builder.Services.Decorate<IAuctionRepository, CachedAuctionRepository>();
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis"); // Distributed Caching
+});
 
 // Async Communication Services
 builder.Services.AddMessageBroker(builder.Configuration);

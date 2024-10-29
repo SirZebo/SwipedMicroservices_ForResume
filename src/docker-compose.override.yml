@@ -22,6 +22,12 @@ services:
     ports:
       - "1433:1433"
 
+  distributedcache:
+    container_name: distributedcache
+    restart: always
+    ports:
+      - "6379:6379"
+
   jobschedulerdb:
     container_name: jobschedulerdb
     environment:
@@ -48,12 +54,14 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=auctiondb;Port=5432;Database=AuctionDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      - ConnectionStrings__Redis=distributedcache:6379
       - MessageBroker__Host=amqp://bidding-mq:5672
       - MessageBroker__UserName=guest
       - MessageBroker__Password=guest
     depends_on:
       - auctiondb
       - messagebroker
+      - distributedcache
     ports:
       - "6000:8080"
       - "6060:8081"
