@@ -19,7 +19,8 @@ public class AuctionCreatedEventHandler
         logger.LogInformation("Integration Event handled: {IntegrationEvent}", context.Message.GetType().Name);
 
         var auctionEndedEvent = new AuctionEndedEvent { AuctionId = context.Message.AuctionId };
-        await scheduler.SchedulePublish(DateTime.UtcNow.AddSeconds(20), auctionEndedEvent);
+        //await scheduler.SchedulePublish(context.Message.EndingDate.AddSeconds(15), auctionEndedEvent);
+        await scheduler.SchedulePublish(DateTime.UtcNow.AddSeconds(60), auctionEndedEvent);
         await Task.CompletedTask;
         //jobClient.Schedule(() => ScheduleJob(auctionEndedEvent), TimeSpan.FromSeconds(5)); //context.Message.EndingDate.TimeOfDay
         //await Task.CompletedTask;

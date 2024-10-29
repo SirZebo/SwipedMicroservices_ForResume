@@ -14,7 +14,8 @@ public class AuctionEndedEventHandler
         logger.LogInformation("Integration Event handled: {IntegrationEvent}", context.Message.GetType().Name);
 
         var auctionId = AuctionId.Of(context.Message.AuctionId);
-        var bid = await dbContext.Bids.Where(b => b.AuctionId == auctionId).FirstOrDefaultAsync();
+        var bid = await dbContext.Bids.Where(b => b.AuctionId == auctionId).FirstAsync();
+        var test = await dbContext.Bids.Where(b => b.AuctionId == auctionId).ToListAsync();
 
         if (bid is null || bid.CustomerId.Value == Guid.Empty)
         {
@@ -26,7 +27,7 @@ public class AuctionEndedEventHandler
         await publisher.Publish(bidEndedIntegrationEvent);
     }
 
-    private object MapToBidEndedIntegrationEvent(Bid bid)
+    private BidEndedEvent MapToBidEndedIntegrationEvent(Bid bid)
     {
         return new BidEndedEvent
         {

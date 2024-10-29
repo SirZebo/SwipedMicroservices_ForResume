@@ -1,0 +1,12 @@
+﻿global using Carter;
+global using BiddingResult.API.Models;
+global using Mapster;
+global using MediatR;
+global using Marten;
+global using BuildingBlocks.CQRS;
+global using BiddingResult.API.Exceptions;
+global using FluentValidation;
+global using BuildingBlocks.Behaviors;
+global using BuildingBlocks.Exceptions.Handler;
+global using BiddingResult.API.Data;
+global using Marten.Pagination;
