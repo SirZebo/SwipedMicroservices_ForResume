@@ -6,12 +6,12 @@ using MediatR;
 
 namespace JobScheduler.API.Jobs.EventHandler.Integration;
 
-public class AuctionCreatedEventHandler
+public class AuctionCreatedEventHandler2
     (ISender sender,
     IBackgroundJobClient jobClient,
     IMessageScheduler scheduler,
     IPublishEndpoint publishEndpoint,
-    ILogger<AuctionCreatedEventHandler> logger)
+    ILogger<AuctionCreatedEventHandler2> logger)
     : IConsumer<AuctionCreatedEvent>
 {
     public async Task Consume(ConsumeContext<AuctionCreatedEvent> context)

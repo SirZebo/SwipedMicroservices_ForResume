@@ -1,7 +1,6 @@
 ﻿using BuildingBlocks.Behaviors;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using BuildingBlocks.Messaging.MassTransit;
 using System.Reflection;
 
 namespace Bidding.Application;
