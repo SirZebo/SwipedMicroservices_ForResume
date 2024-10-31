@@ -11,13 +11,6 @@ namespace MLService.Models
         public string ProductDescription { get; set; }
 
         [LoadColumn(2)]
-        public string Category { get; set; } // This is the label we want to predict
-    }
-
-    public class ProductPrediction
-    {
-        public string PredictedCategory { get; set; }
-        public float Probability { get; set; }
-        public float Score { get; set; }
+         public string? Category { get; set; } // Make nullable if it's not always provided
     }
 }

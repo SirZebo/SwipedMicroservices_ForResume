@@ -25,4 +25,4 @@ app.UseAuthorization();
 
 app.MapControllers(); // Maps controller endpoints, like /api/ml/predict
 
-app.Run();
+app.Run("http://0.0.0.0:8080");

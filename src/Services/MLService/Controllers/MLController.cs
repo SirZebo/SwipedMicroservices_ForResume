@@ -24,7 +24,23 @@ namespace MLService.Controllers
             }
 
             var prediction = _model.Predict(input);
-            return Ok(prediction);
+
+            // Process individual scores, if necessary
+            if (prediction.Score != null && prediction.Score.Length > 0)
+            {
+                float firstScore = prediction.Score[0];
+                float secondScore = prediction.Score.Length > 1 ? prediction.Score[1] : 0.0f;
+                float thirdScore = prediction.Score.Length > 2 ? prediction.Score[2] : 0.0f;
+                Console.WriteLine($"Scores: {firstScore}, {secondScore}, {thirdScore}");
+            }
+
+            return Ok(prediction); 
+        }
+
+        [HttpGet("health")]
+        public IActionResult HealthCheck()
+        {
+            return Ok("ML Service is running");
         }
     }
 }
