@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using MLService.Models;
 using MLService.ML;
+using MLService.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MLService.Controllers
 {
@@ -9,34 +13,57 @@ namespace MLService.Controllers
     public class MLController : ControllerBase
     {
         private readonly ProductCategorizationModel _model;
+        private readonly IPredictionRepository _predictionRepository;
 
-        public MLController(ProductCategorizationModel model)
+        public MLController(ProductCategorizationModel model, IPredictionRepository predictionRepository)
         {
             _model = model;
+            _predictionRepository = predictionRepository;
         }
 
         [HttpPost("predict")]
-        public ActionResult<ProductPrediction> Predict([FromBody] ProductData input)
+        public async Task<ActionResult<Prediction>> Predict([FromBody] ProductData input)
         {
             if (input == null)
             {
                 return BadRequest("Invalid input data.");
             }
 
-            var prediction = _model.Predict(input);
+            var predictionResult = _model.Predict(input);
 
-            // Process individual scores, if necessary
-            if (prediction.Score != null && prediction.Score.Length > 0)
+            var predictionRecord = new Prediction
             {
-                float firstScore = prediction.Score[0];
-                float secondScore = prediction.Score.Length > 1 ? prediction.Score[1] : 0.0f;
-                float thirdScore = prediction.Score.Length > 2 ? prediction.Score[2] : 0.0f;
-                Console.WriteLine($"Scores: {firstScore}, {secondScore}, {thirdScore}");
-            }
+                ProductName = input.ProductName,
+                ProductDescription = input.ProductDescription,
+                PredictedCategory = predictionResult.PredictedCategory,
+                Probability = predictionResult.Probability,
+                PredictionDate = DateTime.UtcNow
+            };
 
-            return Ok(prediction); 
+            await _predictionRepository.SavePredictionAsync(predictionRecord);
+
+            return Ok(predictionRecord);
         }
 
+        [HttpGet("predictions")]
+        public async Task<ActionResult<IEnumerable<Prediction>>> GetAllPredictions()
+        {
+            var predictions = await _predictionRepository.GetAllPredictionsAsync();
+            return Ok(predictions);
+        }
+
+        [HttpGet("predictions/{id}")]
+        public async Task<ActionResult<Prediction>> GetPredictionById(int id)
+        {
+            var prediction = await _predictionRepository.GetPredictionByIdAsync(id);
+            if (prediction == null)
+            {
+                return NotFound();
+            }
+            return Ok(prediction);
+        }
+
+        // Health Check endpoint added here
         [HttpGet("health")]
         public IActionResult HealthCheck()
         {
