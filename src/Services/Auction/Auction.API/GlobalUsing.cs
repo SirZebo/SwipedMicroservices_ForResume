@@ -7,4 +7,4 @@ global using BuildingBlocks.Behaviors;
 global using BuildingBlocks.CQRS;
 global using Auction.API.Models;
 global using Marten.Pagination;
-
+global using Auction.API.Data;

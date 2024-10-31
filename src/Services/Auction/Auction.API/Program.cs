@@ -1,6 +1,10 @@
 using BuildingBlocks.Exceptions.Handler;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using BuildingBlocks.Messaging.MassTransit;
+using Microsoft.Extensions.Options;
+using System.Reflection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +29,17 @@ builder.Services.AddMarten(opts =>
     opts.Connection(builder.Configuration.GetConnectionString("Database")!);
 }).UseLightweightSessions();
 
+builder.Services.AddScoped<IAuctionRepository, AuctionRepository>();
+builder.Services.Decorate<IAuctionRepository, CachedAuctionRepository>();
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis"); // Distributed Caching
+});
+
+// Async Communication Services
+builder.Services.AddMessageBroker(builder.Configuration, Assembly.GetExecutingAssembly());
+
+// Cross-Cutting Services
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
 builder.Services.AddHealthChecks()

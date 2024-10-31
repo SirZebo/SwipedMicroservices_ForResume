@@ -1,27 +1,31 @@
-# Use the .NET SDK for building the app
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+# This stage is used when running from VS in fast mode (Default for Debug configuration)
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER app
 WORKDIR /app
+EXPOSE 8080
+EXPOSE 8081
 
-# Copy the BuildingBlocks project first
-COPY src/BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj src/BuildingBlocks/BuildingBlocks/
-COPY src/Services/Bidding/Bidding.API/Bidding.API.csproj src/Services/Bidding/Bidding.API/
-
-# Restore dependencies for both projects
-RUN dotnet restore "src/Services/Bidding/Bidding.API/Bidding.API.csproj"
-
-# Copy all source files for the entire solution
+# This stage is used to build the service project
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+COPY ["Services/Auction/Auction.API/Auction.API.csproj", "Services/Auction/Auction.API/"]
+COPY ["BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj", "BuildingBlocks/BuildingBlocks.Messaging/"]
+COPY ["BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "BuildingBlocks/BuildingBlocks/"]
+RUN dotnet restore "./Services/Auction/Auction.API/Auction.API.csproj"
 COPY . .
+WORKDIR "/src/Services/Auction/Auction.API"
+RUN dotnet build "./Auction.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# Set the working directory and build the Bidding.API project
-WORKDIR /app/src/Services/Bidding/Bidding.API
-RUN dotnet build "Bidding.API.csproj" -c Release -o /app/build
-
-# Publish the app
+# This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
-RUN dotnet publish "Bidding.API.csproj" -c Release -o /app/publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "./Auction.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# Use the ASP.NET runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
+FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Bidding.API.dll"]
+ENTRYPOINT ["dotnet", "Auction.API.dll"]

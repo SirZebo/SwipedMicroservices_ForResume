@@ -1,6 +1,6 @@
 ﻿namespace Auction.API.Auctions.CreateAuction;
 
-public record CreateAuctionRequest(string Name, List<string> Category, string Description, string ImageFile, DateTime EndingDate, decimal Price);
+public record CreateAuctionRequest(string Name, List<string> Category, string Description, string ImageFile, DateTime EndingDate, decimal StartingPrice);
 
 public record CreateAuctionResponse(Guid Id);
 

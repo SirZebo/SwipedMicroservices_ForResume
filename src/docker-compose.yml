@@ -1,18 +1,78 @@
-version: '3.4'
+#version: '3.4'
 
 services:
   auctiondb:
     image: postgres
 
+  distributedcache:
+    image: redis
+
   biddb:
     image: mcr.microsoft.com/mssql/server
 
+  jobschedulerdb:
+    image: mcr.microsoft.com/mssql/server
+
+  messagebroker:
+    image: rabbitmq:management
+
+  contractdb:
+    image: postgres
+
+# Environement is just to force HTTP, can remove if not needed
   auction.api:
     image: ${DOCKER_REGISTRY-}auctionapi
     build:
       context: .
       dockerfile: Services/Auction/Auction.API/Dockerfile
+    # environment:
+    # - ASPNETCORE_URLS=http://+:5001
+    # - ASPNETCORE_ENVIRONMENT=Development
+
+
+  bidding.api:
+    image: ${DOCKER_REGISTRY-}biddingapi
+    build:
+      context: .
+      dockerfile: Services/Bidding/Bidding.API/Dockerfile
+    # environment:
+    # - ASPNETCORE_URLS=http://+:5001
+    # - ASPNETCORE_ENVIRONMENT=Development
+
+  jobscheduler.api:
+    image: ${DOCKER_REGISTRY-}jobschedulerapi
+    build:
+      context: .
+      dockerfile: Services/JobScheduler/JobScheduler.API/Dockerfile
+    # environment:
+    # - ASPNETCORE_URLS=http://+:5001
+    # - ASPNETCORE_ENVIRONMENT=Development
+
+  ml-service:
+    build:
+      context: ./Services/MLService             
+      dockerfile: Dockerfile                    
+    container_name: ml_service
+    ports:
+      - "5002:8080"                               
+    # environment:
+    #   - ASPNETCORE_ENVIRONMENT=Development     
+    volumes:
+      - ./Services/MLService/ML/Models:/app/ML/Models  # Mounts the Models directory to persist the model file
+
+
+
+
+  biddingresult.api:
+    image: ${DOCKER_REGISTRY-}biddingresultapi
+    build:
+      context: .
+      dockerfile: Services/BiddingResult/BiddingResult.API/Dockerfile
 
 volumes:
-  postgres_auction:    
+  postgres_auction:  
+  postgres_contract:
+
+
+
 

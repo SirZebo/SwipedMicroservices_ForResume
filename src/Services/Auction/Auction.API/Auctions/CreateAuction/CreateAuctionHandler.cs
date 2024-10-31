@@ -1,6 +1,9 @@
-﻿namespace Auction.API.Auctions.CreateAuction;
+﻿using BuildingBlocks.Messaging.Events;
+using MassTransit;
 
-public record CreateAuctionCommand(string Name, List<string> Category, string Description, string ImageFile, DateTime EndingDate, decimal Price)
+namespace Auction.API.Auctions.CreateAuction;
+
+public record CreateAuctionCommand(string Name, List<string> Category, string Description, string ImageFile, DateTime EndingDate, decimal StartingPrice)
     : ICommand<CreateAuctionResult>;
 
 public record CreateAuctionResult(Guid Id);
@@ -19,17 +22,17 @@ public class CreateAuctionCommandValidator : AbstractValidator<CreateAuctionComm
         RuleFor(x => x.ImageFile)
             .NotEmpty().WithMessage("ImageFile is required");
 
-        RuleFor(x => x.Price)
+        RuleFor(x => x.StartingPrice)
             .GreaterThan(0).WithMessage("Price must be greater than 0");
 
         RuleFor(x => x.EndingDate)
-            .GreaterThan(DateTime.UtcNow.AddDays(1)).WithMessage("EndingDate must be at least 1 day later")
+            .GreaterThan(DateTime.UtcNow.AddSeconds(1)).WithMessage("EndingDate must be at least 1 day later")
             .LessThan(DateTime.UtcNow.AddMonths(3)).WithMessage("EndingDate must be less than 3 months");
     }
 
 }
 internal class CreateAuctionCommandHandler
-    (IDocumentSession session)
+    (IAuctionRepository repository, IPublishEndpoint publishEndpoint)
     : ICommandHandler<CreateAuctionCommand, CreateAuctionResult>
 {
     // Business logic to create a product
@@ -42,12 +45,16 @@ internal class CreateAuctionCommandHandler
             Description = command.Description,
             ImageFile = command.ImageFile,
             EndingDate = command.EndingDate,
-            Price = command.Price
+            StartingPrice = command.StartingPrice
         };
 
         // save to database
-        session.Store(auction);
-        await session.SaveChangesAsync(cancellationToken);
+        await repository.StoreAuction(auction);
+
+        var eventMessage = auction.Adapt<AuctionCreatedEvent>();
+        eventMessage.AuctionId = auction.Id;
+
+        await publishEndpoint.Publish(eventMessage, cancellationToken);
 
         // return result
         return new CreateAuctionResult(auction.Id);

@@ -6,9 +6,9 @@ public record CreateBidCommand(BidDto Bid)
 
 public record CreateBidResult(Guid Id);
 
-public class CreateOrderCommandValidator : AbstractValidator<CreateBidCommand>
+public class CreateBidCommandValidator : AbstractValidator<CreateBidCommand>
 {
-    public CreateOrderCommandValidator()
+    public CreateBidCommandValidator()
     {
         RuleFor(x => x.Bid.Price).GreaterThan(0).WithMessage("Price must be greater than 0");
         RuleFor(x => x.Bid.CustomerId).NotNull().WithMessage("CustomerId is required");

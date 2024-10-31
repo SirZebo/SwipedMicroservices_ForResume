@@ -23,7 +23,7 @@ public class AuctionInitialData : IInitialData
                     Name = "IPhone X",
                     Description = "This phone is the company's biggest change to its flagship smartphone in years. It includes a borderless.",
                     ImageFile = "Auction-1.png",
-                    Price = 950.00M,
+                    StartingPrice = 950.00M,
                     EndingDate = DateTime.Now.AddDays(3),
                     Category = new List<string> { "Smart Phone" }
                 },

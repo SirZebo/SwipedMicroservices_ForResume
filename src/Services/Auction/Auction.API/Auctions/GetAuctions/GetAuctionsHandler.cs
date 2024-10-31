@@ -5,13 +5,12 @@ public record GetAuctionsQuery(int? PageNumber = 1, int? PageSize = 10) : IQuery
 public record GetAuctionsResult(IEnumerable<Models.Auction> Auctions);
 
 internal class GetAuctionsQueryHandler
-    (IDocumentSession session)
+    (IAuctionRepository repository)
     : IQueryHandler<GetAuctionsQuery, GetAuctionsResult>
 {
     public async Task<GetAuctionsResult> Handle(GetAuctionsQuery query, CancellationToken cancellationToken)
     {
-        var auctions = await session.Query<Models.Auction>()
-            .ToPagedListAsync(query.PageNumber ?? 1, query.PageSize ?? 10, cancellationToken);
+        var auctions = await repository.GetAuctions(cancellationToken);
 
         return new GetAuctionsResult(auctions);
     }

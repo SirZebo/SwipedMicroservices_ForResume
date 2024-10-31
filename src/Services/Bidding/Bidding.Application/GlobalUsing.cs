@@ -8,3 +8,4 @@ global using MediatR;
 global using Microsoft.Extensions.Logging;
 global using Bidding.Domain.Events;
 global using Microsoft.EntityFrameworkCore;
+global using Bidding.Application.Extensions;

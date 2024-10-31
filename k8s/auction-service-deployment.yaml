@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auction-service
-          image: auction-service:latest
-          imagePullPolicy: IfNotPresent
+          image: auctionapi:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080

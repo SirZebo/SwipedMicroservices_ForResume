@@ -20,7 +20,7 @@ public class BiddingRepository
 
     public async Task<Bid> StoreBid(Bid bid, CancellationToken cancellationToken = default)
     {
-        dbContext.Bids.Add(bid);
+        dbContext.Bids.Update(bid);
         await dbContext.SaveChangesAsync(cancellationToken);
         return bid;
     }
