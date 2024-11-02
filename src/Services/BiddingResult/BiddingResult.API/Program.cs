@@ -38,9 +38,23 @@ builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 builder.Services.AddHealthChecks()
     .AddNpgSql(builder.Configuration.GetConnectionString("Database")!);
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.WithOrigins("http://127.0.0.1:5500/",
+                                        "http://localhost",
+                                        "https://localhost");
+        });
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline automatically instead of DI in every time a new endpoint is created
+app.UseCors();
+
 app.MapCarter();
 
 app.UseExceptionHandler(options => { });

@@ -35,7 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "JobScheduler", "JobSchedule
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobScheduler.API", "Services\JobScheduler\JobScheduler.API\JobScheduler.API.csproj", "{88722C09-9621-484C-A561-9C4ADDA0225A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiddingResult.API", "Services\BiddingResult\BiddingResult.API\BiddingResult.API.csproj", "{3A884252-4D6B-4451-8BA1-342BA6705DEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BiddingResult.API", "Services\BiddingResult\BiddingResult.API\BiddingResult.API.csproj", "{3A884252-4D6B-4451-8BA1-342BA6705DEC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
