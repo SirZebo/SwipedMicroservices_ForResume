@@ -2,31 +2,82 @@ version: '3.4'
 
 services:
   auctiondb:
-    container_name: auctiondb
+    image: postgres
+    networks:
+      - swiped_network
+    volumes:
+      - postgres_auction:/var/lib/postgresql/data/
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=AuctionDb
-    restart: always
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_auction:/var/lib/postgresql/data/
+
+<<<<<<< Updated upstream
+=======
+  distributedcache:
+    image: redis
+    networks:
+      - swiped_network
+    ports:
+      - "6379:6379"
 
   biddb:
-    container_name: biddb
+    image: mcr.microsoft.com/mssql/server
+    networks:
+      - swiped_network
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=SwN12345678
-    restart: always
     ports:
       - "1433:1433"
 
+  jobschedulerdb:
+    image: mcr.microsoft.com/mssql/server
+    networks:
+      - swiped_network
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=SwN12345678
+    ports:
+      - "1434:1433"
+
+  messagebroker:
+    image: rabbitmq:management
+    networks:
+      - swiped_network
+    hostname: bidding-mq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  contractdb:
+    image: postgres
+    networks:
+      - swiped_network
+    volumes:
+      - postgres_contract:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=ContractDb
+    ports:
+      - "5433:5432"
+
+>>>>>>> Stashed changes
   auction.api:
+    image: ${DOCKER_REGISTRY-}auctionapi
+    build:
+      context: .
+      dockerfile: Services/Auction/Auction.API/Dockerfile
+    networks:
+      - swiped_network
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=auctiondb;Port=5432;Database=AuctionDb;User Id=postgres;Password=postgres;Include Error Detail=true
     depends_on:
       - auctiondb
@@ -38,10 +89,23 @@ services:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
 
   bidding.api:
+    image: ${DOCKER_REGISTRY-}biddingapi
+    build:
+      context: .
+      dockerfile: Services/Bidding/Bidding.API/Dockerfile
+    networks:
+      - swiped_network
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+<<<<<<< Updated upstream
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+=======
+      - ConnectionStrings__Database=Server=biddb;Database=BidDb;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True
+      - MessageBroker__Host=amqp://bidding-mq:5672
+      - MessageBroker__UserName=guest
+      - MessageBroker__Password=guest
+>>>>>>> Stashed changes
     depends_on:
       - biddb
     ports:
@@ -50,3 +114,80 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+<<<<<<< Updated upstream
+=======
+
+  jobscheduler.api:
+    image: ${DOCKER_REGISTRY-}jobschedulerapi
+    build:
+      context: .
+      dockerfile: Services/JobScheduler/JobScheduler.API/Dockerfile
+    networks:
+      - swiped_network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Database=Server=jobschedulerdb;Database=JobSchedulerDb;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True
+      - MessageBroker__Host=amqp://bidding-mq:5672
+      - MessageBroker__UserName=guest
+      - MessageBroker__Password=guest
+    depends_on:
+      - jobschedulerdb
+      - messagebroker
+    ports:
+      - "6004:8080"
+      - "6064:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  ml-service:
+    build:
+      context: ./Services/MLService
+      dockerfile: Dockerfile
+    container_name: ml_service
+    ports:
+      - "5002:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal;Port=3307;Database=MachineLearningDB;User=User1;Password=User123;
+      - MessageBroker__Host=amqp://bidding-mq:5672
+      - MessageBroker__UserName=guest
+      - MessageBroker__Password=guest
+    depends_on:
+      - messagebroker
+    volumes:
+      - ./Services/MLService/ML/Models:/app/ML/Models
+    networks:
+      - swiped_network
+
+  biddingresult.api:
+    image: ${DOCKER_REGISTRY-}biddingresultapi
+    build:
+      context: .
+      dockerfile: Services/BiddingResult/BiddingResult.API/Dockerfile
+    networks:
+      - swiped_network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Database=Server=contractdb;Port=5432;Database=ContractDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      - MessageBroker__Host=amqp://bidding-mq:5672
+      - MessageBroker__UserName=guest
+      - MessageBroker__Password=guest
+    depends_on:
+      - contractdb
+      - messagebroker
+    ports:
+      - "6003:8080"
+      - "6063:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+networks:
+  swiped_network:
+    external: true
+
+volumes:
+  postgres_auction:
+  postgres_contract:
+>>>>>>> Stashed changes
