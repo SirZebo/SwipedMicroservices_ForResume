@@ -6,12 +6,12 @@ using MediatR;
 
 namespace JobScheduler.API.Jobs.EventHandler.Integration;
 
-public class AuctionCreatedEventHandler
+public class AuctionCreatedEventHandler2
     (ISender sender,
     IBackgroundJobClient jobClient,
     IMessageScheduler scheduler,
     IPublishEndpoint publishEndpoint,
-    ILogger<AuctionCreatedEventHandler> logger)
+    ILogger<AuctionCreatedEventHandler2> logger)
     : IConsumer<AuctionCreatedEvent>
 {
     public async Task Consume(ConsumeContext<AuctionCreatedEvent> context)
@@ -19,7 +19,8 @@ public class AuctionCreatedEventHandler
         logger.LogInformation("Integration Event handled: {IntegrationEvent}", context.Message.GetType().Name);
 
         var auctionEndedEvent = new AuctionEndedEvent { AuctionId = context.Message.AuctionId };
-        await scheduler.SchedulePublish(DateTime.UtcNow.AddSeconds(20), auctionEndedEvent);
+        //await scheduler.SchedulePublish(context.Message.EndingDate.AddSeconds(15), auctionEndedEvent);
+        await scheduler.SchedulePublish(DateTime.UtcNow.AddSeconds(60), auctionEndedEvent);
         await Task.CompletedTask;
         //jobClient.Schedule(() => ScheduleJob(auctionEndedEvent), TimeSpan.FromSeconds(5)); //context.Message.EndingDate.TimeOfDay
         //await Task.CompletedTask;

@@ -1,24 +1,19 @@
-using BuildingBlocks.Exceptions.Handler;
+using BuildingBlocks.Messaging.MassTransit;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using BuildingBlocks.Messaging.MassTransit;
-using Microsoft.Extensions.Options;
 using System.Reflection;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add Services to the container. - builder.AddServices()
 
 // Automatically does DI of our handlers through assembly reflection
-
 var assembly = typeof(Program).Assembly;
 builder.Services.AddMediatR(config =>
 {
     config.RegisterServicesFromAssembly(assembly);
     config.AddOpenBehavior(typeof(ValidationBehavior<,>));
     config.AddOpenBehavior(typeof(LoggingBehavior<,>));
-
 });
 
 builder.Services.AddValidatorsFromAssembly(assembly);
@@ -28,19 +23,16 @@ builder.Services.AddCarter();
 builder.Services.AddMarten(opts =>
 {
     opts.Connection(builder.Configuration.GetConnectionString("Database")!);
+    opts.Schema.For<Contract>().Identity(x => x.Id);
 }).UseLightweightSessions();
 
-builder.Services.AddScoped<IAuctionRepository, AuctionRepository>();
-builder.Services.Decorate<IAuctionRepository, CachedAuctionRepository>();
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = builder.Configuration.GetConnectionString("Redis"); // Distributed Caching
-});
+if (builder.Environment.IsDevelopment())
+    builder.Services.InitializeMartenWith<ContractInitialData>();
 
 // Async Communication Services
 builder.Services.AddMessageBroker(builder.Configuration, Assembly.GetExecutingAssembly());
 
-// Cross-Cutting Services
+
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
 builder.Services.AddHealthChecks()

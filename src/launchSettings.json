@@ -6,7 +6,8 @@
       "serviceActions": {
         "auction.api": "StartDebugging",
         "bidding.api": "StartDebugging",
-        "jobscheduler.api": "StartDebugging"
+        "jobscheduler.api": "StartDebugging",
+        "biddingresult.api": "StartDebugging"
       }
     }
   }

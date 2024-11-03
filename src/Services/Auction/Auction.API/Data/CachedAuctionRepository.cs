@@ -64,5 +64,24 @@ public class CachedAuctionRepository
 
         return auction;
     }
+
+    public async Task<Models.Auction> UpdateAuction(Models.Auction newAuction, CancellationToken cancellationToken = default)
+    {
+        var auction = await repository.UpdateAuction(newAuction, cancellationToken);
+
+        var updatedCategories = auction.Category.Except(newAuction.Category).ToList();
+
+        var cacheKey = $"auction:{auction.Id}";
+        await cache.RemoveAsync(cacheKey, cancellationToken);
+
+        foreach (var category in updatedCategories)
+        {
+            cacheKey = $"auction:{category}";
+            await cache.RemoveAsync(cacheKey, cancellationToken);
+        }
+
+        return auction;
+
+    }
 }
 

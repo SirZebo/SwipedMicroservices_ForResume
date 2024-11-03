@@ -4,10 +4,10 @@ using MassTransit;
 using Microsoft.Extensions.Logging;
 
 namespace Bidding.Application.Bids.EventHandlers.Integration;
-public class AuctionCreatedEventHandler
+public class AuctionCreatedEventHandler1
     (ISender sender,
     IApplicationDbContext dbContext,
-    ILogger<AuctionCreatedEventHandler> logger)
+    ILogger<AuctionCreatedEventHandler1> logger)
     : IConsumer<AuctionCreatedEvent>
 {
     public async Task Consume(ConsumeContext<AuctionCreatedEvent> context)
