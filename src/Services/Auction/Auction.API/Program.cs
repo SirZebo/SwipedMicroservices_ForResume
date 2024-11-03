@@ -48,12 +48,12 @@ builder.Services.AddHealthChecks()
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
-        policy =>
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
         {
-            policy.WithOrigins("http://127.0.0.1:5500",
-                               "http://localhost",
-                               "https://localhost");
+            builder.AllowAnyOrigin();
+            builder.AllowAnyHeader();
+            builder.AllowAnyMethod();
         });
 });
 
@@ -61,7 +61,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline automatically instead of DI in every time a new endpoint is created
-app.UseCors();
+app.UseCors("AllowAllOrigins");
 
 app.MapCarter();
 

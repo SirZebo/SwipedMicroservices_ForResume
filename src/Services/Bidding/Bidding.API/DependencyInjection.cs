@@ -14,12 +14,12 @@ public static class DependencyInjection
         //    .AddSqlServer(configuration.GetConnectionString("Database")!);
         services.AddCors(options =>
         {
-            options.AddDefaultPolicy(
-                policy =>
+            options.AddPolicy("AllowAllOrigins",
+                builder =>
                 {
-                    policy.WithOrigins("http://127.0.0.1:5500",
-                                        "http://localhost",
-                                        "https://localhost");
+                    builder.AllowAnyOrigin();
+                    builder.AllowAnyHeader();
+                    builder.AllowAnyMethod();
                 });
         });
 
@@ -28,7 +28,7 @@ public static class DependencyInjection
 
     public static WebApplication UseApiServices(this WebApplication app)
     {
-        app.UseCors();
+        app.UseCors("AllowAllOrigins");
         app.MapCarter();
 
         app.UseExceptionHandler(options => { });
