@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: distributedcache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: distributedcache
+  template:
+    metadata:
+      labels:
+        app: distributedcache
+    spec:
+      containers:
+        - name: distributedcache
+          image: redis:latest
+          ports:
+            - containerPort: 6379

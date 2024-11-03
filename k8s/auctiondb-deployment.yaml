@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auctiondb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auctiondb
+  template:
+    metadata:
+      labels:
+        app: auctiondb
+    spec:
+      containers:
+        - name: auctiondb
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "AuctionDb"

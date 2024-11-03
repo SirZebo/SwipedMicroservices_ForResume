@@ -19,5 +19,15 @@ spec:
           ports:
             - containerPort: 5001
           env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Development"
             - name: ASPNETCORE_URLS
-              value: "http://+:5001"  # Ensure ASP.NET listens on 5001
+              value: "http://+:5001"
+            - name: ConnectionStrings__Database
+              value: "Server=biddb;Database=BidDb;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True"
+            - name: MessageBroker__Host
+              value: "amqp://messagebroker:5672"
+            - name: MessageBroker__UserName
+              value: "guest"
+            - name: MessageBroker__Password
+              value: "guest"
