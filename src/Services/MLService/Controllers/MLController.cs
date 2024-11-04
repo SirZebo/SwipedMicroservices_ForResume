@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using MLService.Models;
 using MLService.ML;
+using MLService.Data;
 using MLService.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;  // Make sure to import this for DbContext
 
 namespace MLService.Controllers
 {
@@ -14,11 +16,13 @@ namespace MLService.Controllers
     {
         private readonly ProductCategorizationModel _model;
         private readonly IPredictionRepository _predictionRepository;
+        private readonly ApplicationDbContext _context;  // Adding ApplicationDbContext to interact with database
 
-        public MLController(ProductCategorizationModel model, IPredictionRepository predictionRepository)
+        public MLController(ProductCategorizationModel model, IPredictionRepository predictionRepository, ApplicationDbContext context)
         {
             _model = model;
             _predictionRepository = predictionRepository;
+            _context = context;
         }
 
         [HttpPost("predict")]
@@ -63,13 +67,14 @@ namespace MLService.Controllers
             return Ok(prediction);
         }
 
-        // Health Check endpoint added here
+        // Health Check endpoint
         [HttpGet("health")]
         public IActionResult HealthCheck()
         {
             return Ok("ML Service is running");
         }
 
+<<<<<<< Updated upstream
         // RabbitMQ Listener endpoint added here
         [HttpGet("start-rabbitmq-listener")]
         public IActionResult StartRabbitMQListener()
@@ -77,6 +82,36 @@ namespace MLService.Controllers
             var rabbitMQService = new RabbitMQService();
             rabbitMQService.ConnectAndListen();
             return Ok("RabbitMQ Listener started.");
+=======
+        // New endpoint to store auction data
+        [HttpPost("store-auction")]
+        public async Task<IActionResult> StoreAuctionData([FromBody] AuctionModelData auctionData)
+        {
+            if (auctionData == null || string.IsNullOrEmpty(auctionData.AuctionId))
+            {
+                return BadRequest("AuctionId and model data are required.");
+            }
+
+            _context.AuctionModelData.Add(auctionData);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Auction model data stored successfully" });
+        }
+
+        // New endpoint to retrieve auction data by auctionId
+        [HttpGet("get-auction/{auctionId}")]
+        public async Task<IActionResult> GetAuctionData(string auctionId)
+        {
+            var auctionData = await _context.AuctionModelData
+                .FirstOrDefaultAsync(a => a.AuctionId == auctionId);
+
+            if (auctionData == null)
+            {
+                return NotFound("Auction model data not found.");
+            }
+
+            return Ok(auctionData);
+>>>>>>> Stashed changes
         }
     }
 }

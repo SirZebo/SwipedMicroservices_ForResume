@@ -3,6 +3,7 @@ version: '3.4'
 services:
   auctiondb:
     image: postgres
+<<<<<<< Updated upstream
     networks:
       - swiped_network
     volumes:
@@ -72,11 +73,57 @@ services:
       - "5433:5432"
 
 >>>>>>> Stashed changes
+=======
+    environment:
+      - POSTGRES_USER=auction_user
+      - POSTGRES_PASSWORD=auction_pass
+      - POSTGRES_DB=auctiondb
+    volumes:
+      - postgres_auction:/var/lib/postgresql/data
+
+  contractdb:
+    image: postgres
+    environment:
+      - POSTGRES_USER=contract_user
+      - POSTGRES_PASSWORD=contract_pass
+      - POSTGRES_DB=contractdb
+    volumes:
+      - postgres_contract:/var/lib/postgresql/data
+
+  distributedcache:
+    image: redis
+    container_name: distributed_cache
+
+  biddb:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=StrongPass!123
+    ports:
+      - "1433:1433"
+
+  jobschedulerdb:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=StrongPass!123
+    ports:
+      - "1434:1433"
+
+  messagebroker:
+    image: rabbitmq:management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    container_name: rabbitmq_broker
+
+>>>>>>> Stashed changes
   auction.api:
     image: ${DOCKER_REGISTRY-}auctionapi
     build:
       context: .
       dockerfile: Services/Auction/Auction.API/Dockerfile
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 =======
     networks:
@@ -99,12 +146,23 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
 >>>>>>> Stashed changes
+=======
+    environment:
+      - ASPNETCORE_URLS=http://+:5001
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - auctiondb
+      - messagebroker
+    ports:
+      - "5001:5001"
+>>>>>>> Stashed changes
 
   bidding.api:
     image: ${DOCKER_REGISTRY-}biddingapi
     build:
       context: .
       dockerfile: Services/Bidding/Bidding.API/Dockerfile
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 
 volumes:
@@ -120,21 +178,31 @@ volumes:
       - MessageBroker__Host=amqp://bidding-mq:5672
       - MessageBroker__UserName=guest
       - MessageBroker__Password=guest
+=======
+    environment:
+      - ASPNETCORE_URLS=http://+:5002
+      - ASPNETCORE_ENVIRONMENT=Development
+>>>>>>> Stashed changes
     depends_on:
       - biddb
       - messagebroker
     ports:
+<<<<<<< Updated upstream
       - "6001:8080"
       - "6061:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+=======
+      - "5002:5002"
+>>>>>>> Stashed changes
 
   jobscheduler.api:
     image: ${DOCKER_REGISTRY-}jobschedulerapi
     build:
       context: .
       dockerfile: Services/JobScheduler/JobScheduler.API/Dockerfile
+<<<<<<< Updated upstream
     networks:
       - swiped_network
     environment:
@@ -172,12 +240,38 @@ volumes:
       - ./Services/MLService/ML/Models:/app/ML/Models
     networks:
       - swiped_network
+=======
+    environment:
+      - ASPNETCORE_URLS=http://+:5003
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - jobschedulerdb
+    ports:
+      - "5003:5003"
+
+  ml-service:
+    build:
+      context: .  # The current directory where docker-compose.yml is located
+      dockerfile: Services/MLService/Dockerfile  # Path to Dockerfile inside MLService
+    container_name: ml_service
+    ports:
+      - "5004:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal;Port=3307;Database=MachineLearningDB;User=User1;Password=User123
+    volumes:
+      - ./Services/MLService/ML/Models:/app/ML/Models
+    depends_on:
+      - messagebroker
+    command: ["dotnet", "MLService.dll"]
+>>>>>>> Stashed changes
 
   biddingresult.api:
     image: ${DOCKER_REGISTRY-}biddingresultapi
     build:
       context: .
       dockerfile: Services/BiddingResult/BiddingResult.API/Dockerfile
+<<<<<<< Updated upstream
     networks:
       - swiped_network
     environment:
@@ -199,8 +293,31 @@ volumes:
 networks:
   swiped_network:
     driver: bridge
+=======
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - biddb
+    ports:
+      - "5005:5005"
+
+  biddingnotification.api:
+    image: ${DOCKER_REGISTRY-}biddingnotificationapi
+    build:
+      context: .
+      dockerfile: Services/BiddingNotification/BiddingNotification.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - messagebroker
+    ports:
+      - "5006:5006"
+>>>>>>> Stashed changes
 
 volumes:
   postgres_auction:
   postgres_contract:
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
