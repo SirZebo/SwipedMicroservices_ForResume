@@ -2,8 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MLService.Data;
-using MLService.ML;  // Ensure namespace for ProductCategorizationModel is correct
+using MLService.ML;
 using MLService.Repositories;
+using MLService.Consumers; // Import the RabbitMQ consumer
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +21,7 @@ builder.Services.AddSingleton<ProductCategorizationModel>();
 // Register IPredictionRepository and PredictionRepository for DI
 builder.Services.AddScoped<IPredictionRepository, PredictionRepository>();
 
+// Build the app
 var app = builder.Build();
 
 // Test the database connection
@@ -38,7 +40,15 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// Initialize and start the RabbitMQ consumer for ML tasks
+var mlConsumer = new MLConsumer();
+app.Lifetime.ApplicationStarted.Register(() => mlConsumer.StartListening());
+app.Lifetime.ApplicationStopping.Register(() => mlConsumer.Dispose());
+
+// Configure middleware and routing
 app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
+
+// Run the app on specified URL
 app.Run("http://0.0.0.0:8080");

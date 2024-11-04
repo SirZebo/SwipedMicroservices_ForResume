@@ -60,6 +60,8 @@ services:
        - ConnectionStrings__DefaultConnection=Server=host.docker.internal;Port=3307;Database=MachineLearningDB;User=User1;Password=User123; 
     volumes:
       - ./Services/MLService/ML/Models:/app/ML/Models  # Mounts the Models directory to persist the model file
+    depends_on:
+      - messagebroker 
 
   biddingresult.api:
     image: ${DOCKER_REGISTRY-}biddingresultapi

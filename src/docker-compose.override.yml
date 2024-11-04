@@ -36,6 +36,11 @@ services:
     restart: always
     ports:
       - "1434:1433"
+    
+  ml-service:
+    environment:
+      - RabbitMQ__HostName=messagebroker
+      - RabbitMQ__Port=5672
 
   contractdb:
     container_name: contractdb

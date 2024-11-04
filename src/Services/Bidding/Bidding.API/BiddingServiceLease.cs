@@ -78,12 +78,15 @@ public class LeaderElection
             {
                 lease = await _client.ReadNamespacedLeaseAsync(LeaseName, Namespace);
             }
-            catch (k8s.Models.V1Status status) when (status.Code == 404)
-            {
-                // Lease doesn't exist, create it
-                lease = await CreateNewLease();
+            catch{
                 return true;
             }
+            // catch (k8s.Models.V1Status status) when (status.Code == 404)
+            // {
+            //     // Lease doesn't exist, create it
+            //     lease = await CreateNewLease();
+            //     return true;
+            // }
 
             if (lease.Spec.HolderIdentity == HolderIdentity)
             {
