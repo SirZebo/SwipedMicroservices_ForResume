@@ -27,7 +27,7 @@ public class LoggingBehavior<TRequest, TResponse>
             logger.LogWarning("[PERFORMANCE] The request {Request} took {TimeTaken}",
                 typeof(TRequest).Name, timeTaken.Seconds);
         }
-
+        //logger.LogWarning("[PERFORMANCE] The request {Request} took {TimeTaken} ms", typeof(TRequest).Name, timeTaken.Milliseconds);
         logger.LogInformation("[END] Handled {Request} with {Response}",
             typeof(TRequest).Name, typeof(TResponse).Name);
 

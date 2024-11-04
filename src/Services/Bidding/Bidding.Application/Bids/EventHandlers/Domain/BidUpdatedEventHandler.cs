@@ -8,9 +8,9 @@ namespace Bidding.Application.Bids.EventHandlers.Domain;
 public class BidUpdatedEventHandler
     (IPublishEndpoint publishEndpoint,
     ILogger<BidUpdatedEventHandler> logger)
-    : INotificationHandler<BidUpdatedEvent>
+    : INotificationHandler<Bidding.Domain.Events.BidUpdatedEvent>
 {
-    public async Task Handle(BidUpdatedEvent domainEvent, CancellationToken cancellationToken)
+    public async Task Handle(Bidding.Domain.Events.BidUpdatedEvent domainEvent, CancellationToken cancellationToken)
     {
         logger.LogInformation("Domain Event handled: {DomainEvent}", domainEvent.GetType().Name);
 
@@ -19,11 +19,12 @@ public class BidUpdatedEventHandler
         await publishEndpoint.Publish(bidUpdatedIntegrationEvent, cancellationToken);
     }
 
-    private BidUpdatedIntegrationEvent MapToIntegrationEvent(BidUpdatedEvent domainEvent)
+    private BuildingBlocks.Messaging.Events.BidUpdatedEvent MapToIntegrationEvent(Bidding.Domain.Events.BidUpdatedEvent domainEvent)
     {
-        return new BidUpdatedIntegrationEvent
+        return new BuildingBlocks.Messaging.Events.BidUpdatedEvent
         {
             BidId = domainEvent.Bid.Id.Value,
+            AuctionId = domainEvent.Bid.AuctionId.Value,
             CustomerId = domainEvent.Bid.CustomerId.Value,
             Price = domainEvent.Bid.Price
         };

@@ -67,9 +67,16 @@ services:
       context: .
       dockerfile: Services/BiddingResult/BiddingResult.API/Dockerfile
 
+  biddingnotification.api:
+    image: ${DOCKER_REGISTRY-}biddingnotificationapi
+    build:
+      context: .
+      dockerfile: Services/BiddingNotification/BiddingNotification.API/Dockerfile
+
 volumes:
   postgres_auction:  
   postgres_contract:
+
 
 
 

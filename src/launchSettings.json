@@ -7,7 +7,8 @@
         "auction.api": "StartDebugging",
         "bidding.api": "StartDebugging",
         "jobscheduler.api": "StartDebugging",
-        "biddingresult.api": "StartDebugging"
+        "biddingresult.api": "StartDebugging",
+        "biddingnotification.api": "StartDebugging"
       }
     }
   }

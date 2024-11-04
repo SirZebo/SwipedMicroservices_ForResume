@@ -37,6 +37,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobScheduler.API", "Service
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BiddingResult.API", "Services\BiddingResult\BiddingResult.API\BiddingResult.API.csproj", "{3A884252-4D6B-4451-8BA1-342BA6705DEC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BiddingNotification", "BiddingNotification", "{A2B507F0-9D1F-47C8-89E1-A71FEEBB6896}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiddingNotification.API", "Services\BiddingNotification\BiddingNotification.API\BiddingNotification.API.csproj", "{CC042F33-0F95-4F3B-BC2C-E8876D011DB8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +87,10 @@ Global
 		{3A884252-4D6B-4451-8BA1-342BA6705DEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A884252-4D6B-4451-8BA1-342BA6705DEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A884252-4D6B-4451-8BA1-342BA6705DEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC042F33-0F95-4F3B-BC2C-E8876D011DB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC042F33-0F95-4F3B-BC2C-E8876D011DB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC042F33-0F95-4F3B-BC2C-E8876D011DB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC042F33-0F95-4F3B-BC2C-E8876D011DB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,6 +109,8 @@ Global
 		{A871FD8D-CCC2-4FE2-AB73-F0DA7A6C7343} = {97AD7376-585C-4A3D-9630-1EE020512AB9}
 		{88722C09-9621-484C-A561-9C4ADDA0225A} = {A871FD8D-CCC2-4FE2-AB73-F0DA7A6C7343}
 		{3A884252-4D6B-4451-8BA1-342BA6705DEC} = {72AF0B39-8275-4701-8AFB-4A54ED0C29FB}
+		{A2B507F0-9D1F-47C8-89E1-A71FEEBB6896} = {97AD7376-585C-4A3D-9630-1EE020512AB9}
+		{CC042F33-0F95-4F3B-BC2C-E8876D011DB8} = {A2B507F0-9D1F-47C8-89E1-A71FEEBB6896}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {036BDDC3-E964-4D67-9743-40D15337B71F}
