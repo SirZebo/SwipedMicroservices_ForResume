@@ -18,3 +18,18 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Development"
+            - name: ASPNETCORE_URLS
+              value: "http://+:8080"
+            - name: ConnectionStrings__Database
+              value: "Server=auctiondb;Port=5432;Database=AuctionDb;User Id=postgres;Password=postgres;Include Error Detail=true"
+            - name: ConnectionStrings__Redis
+              value: "distributedcache:6379"
+            - name: MessageBroker__Host
+              value: "amqp://messagebroker:5672"
+            - name: MessageBroker__UserName
+              value: "guest"
+            - name: MessageBroker__Password
+              value: "guest"

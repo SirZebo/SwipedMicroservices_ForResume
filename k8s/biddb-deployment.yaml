@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: biddb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: biddb
+  template:
+    metadata:
+      labels:
+        app: biddb
+    spec:
+      containers:
+        - name: biddb
+          image: mcr.microsoft.com/mssql/server:2019-latest
+          ports:
+            - containerPort: 1433
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: SA_PASSWORD
+              value: "SwN12345678"  # Use the same password as in docker-compose
