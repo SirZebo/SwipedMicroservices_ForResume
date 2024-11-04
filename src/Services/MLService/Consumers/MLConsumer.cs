@@ -56,9 +56,14 @@ namespace MLService.Consumers
                 var message = Encoding.UTF8.GetString(body);
                 var mlRequest = JsonSerializer.Deserialize<MLRequest>(message);
 
+                Console.WriteLine($"Received message from RabbitMQ: {message}");
+
                 if (mlRequest != null)
                 {
                     var result = ProcessMLTask(mlRequest);
+
+                    Console.WriteLine($"Processed result: {JsonSerializer.Serialize(result)}");
+
                     PublishResult(result);
                 }
 
