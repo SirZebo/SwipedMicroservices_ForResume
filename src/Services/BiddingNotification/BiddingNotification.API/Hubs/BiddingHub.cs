@@ -27,7 +27,7 @@ public class BiddingHub : Hub<IBiddingClient>, IBiddingHub
         string id = Context?.GetHttpContext()?.GetRouteValue("auctionId") as string;
 
         var connectionId = Context.ConnectionId;
-        await Groups.AddToGroupAsync(connectionId, id);
+        await _context.Groups.AddToGroupAsync(connectionId, id);
 
         await base.OnConnectedAsync();
     }
@@ -37,7 +37,7 @@ public class BiddingHub : Hub<IBiddingClient>, IBiddingHub
         string id = Context?.GetHttpContext()?.GetRouteValue("auctionId") as string;
 
         var connectionId = Context.ConnectionId;
-        await Groups.RemoveFromGroupAsync(connectionId, id);
+        await _context.Groups.RemoveFromGroupAsync(connectionId, id);
 
         await base.OnDisconnectedAsync(exception);
     }
