@@ -11,11 +11,11 @@ public class ContractInitialData : IInitialData
         if (await session.Query<Contract>().AnyAsync())
             return;
 
-        session.Store<Contract>(GetPreconfiguredProducts());
+        session.Store<Contract>(GetPreconfiguredContracts());
         await session.SaveChangesAsync();
     }
 
-    private static IEnumerable<Contract> GetPreconfiguredProducts() => new List<Contract>()
+    private static IEnumerable<Contract> GetPreconfiguredContracts() => new List<Contract>()
             {
                 new Contract()
                 {

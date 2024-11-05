@@ -1,6 +1,6 @@
 ﻿using Marten.Schema;
-using Marten;
 using BiddingNotification.API.Models;
+using Marten;
 
 namespace BiddingNotification.API.Data;
 

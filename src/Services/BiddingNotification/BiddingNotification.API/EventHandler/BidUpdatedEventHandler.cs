@@ -16,7 +16,6 @@ public class BidUpdatedEventHandler
         logger.LogInformation("Integration Event handled: {IntegrationEvent}", context.Message.GetType().Name);
         var bid = MapToBid(context.Message);
         // await sender.query()
-        await hub.SendSseByAuctionId(bid);
     }
 
     private Bid MapToBid(BidUpdatedEvent message)
