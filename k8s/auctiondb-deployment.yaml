@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+piVersion: apps/v1
 kind: Deployment
 metadata:
   name: auctiondb
@@ -24,3 +24,18 @@ spec:
               value: "postgres"
             - name: POSTGRES_DB
               value: "AuctionDb"
+          resources:
+            requests:
+              cpu: "500m"      # Request 0.5 CPU cores
+              memory: "512Mi"  # Request 512MB of memory
+            limits:
+              cpu: "1000m"     # Limit to 1 CPU core
+              memory: "1Gi"    # Limit to 1GB of memory
+          # Add volume mount for data persistence
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc
