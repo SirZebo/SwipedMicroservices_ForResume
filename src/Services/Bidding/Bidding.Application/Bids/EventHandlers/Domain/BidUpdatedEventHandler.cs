@@ -14,14 +14,29 @@ public class BidUpdatedEventHandler
     {
         logger.LogInformation("Domain Event handled: {DomainEvent}", domainEvent.GetType().Name);
 
-        var bidUpdatedIntegrationEvent = MapToIntegrationEvent(domainEvent);
+        var bidUpdatedIntegrationEvent = MapToBidUpdatedIntegrationEvent(domainEvent);
 
         await publishEndpoint.Publish(bidUpdatedIntegrationEvent, cancellationToken);
+
+        var outbidIntegrationEvent = MapToOutbidEventIntegrationEvent(domainEvent);
+
+        await publishEndpoint.Publish(outbidIntegrationEvent, cancellationToken);
     }
 
-    private BuildingBlocks.Messaging.Events.BidUpdatedEvent MapToIntegrationEvent(Bidding.Domain.Events.BidUpdatedEvent domainEvent)
+    private BuildingBlocks.Messaging.Events.BidUpdatedEvent MapToBidUpdatedIntegrationEvent(Bidding.Domain.Events.BidUpdatedEvent domainEvent)
     {
         return new BuildingBlocks.Messaging.Events.BidUpdatedEvent
+        {
+            BidId = domainEvent.Bid.Id.Value,
+            AuctionId = domainEvent.Bid.AuctionId.Value,
+            CustomerId = domainEvent.Bid.CustomerId.Value,
+            Price = domainEvent.Bid.Price
+        };
+    }
+
+    private OutbidEvent MapToOutbidEventIntegrationEvent(Bidding.Domain.Events.BidUpdatedEvent domainEvent)
+    {
+        return new OutbidEvent
         {
             BidId = domainEvent.Bid.Id.Value,
             AuctionId = domainEvent.Bid.AuctionId.Value,

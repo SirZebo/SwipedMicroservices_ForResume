@@ -3,11 +3,15 @@ import { Link } from 'react-router-dom';
 import { HubConnectionBuilder } from '@microsoft/signalr';
 import { LogLevel } from '@microsoft/signalr';
 import { useParams } from "react-router-dom";
+import {Text, StyleSheet} from 'react-native';
+import { useState } from 'react';
 
 
 function withParams(Component) {
     return props => <Component {...props} params={useParams()} />;
   }
+
+  
 
 class AuctionById extends Component {
     static displayName = AuctionById.name;
@@ -34,7 +38,7 @@ class AuctionById extends Component {
                 console.log('Connected!');
                 console.log(id);
 
-                this.state.connection.on("GetBid", (bid) => {
+                this.state.connection.on("ReceiveBid", (bid) => {
                     console.log(bid)
                     this.setState({
                         bid: bid
@@ -42,6 +46,7 @@ class AuctionById extends Component {
                 });
 
                 this.state.connection.on("SendSseByAuctionId", (bid) => {
+                    console.log(bid)
                     this.setState({
                         bid: bid
                     });
@@ -54,8 +59,16 @@ class AuctionById extends Component {
     }
 
     render() {
+        let bid = this.state.bid;
         return (
-            <div></div>
+            <div>
+                {
+                bid != null
+                ? <h1>{this.state.bid.price}</h1>
+                : <p>0</p>
+            }
+                
+            </div>
         );
     }
 }
