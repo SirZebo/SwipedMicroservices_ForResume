@@ -1,0 +1,80 @@
+{
+  "auctions": [
+    {
+      "id": "0192fc3e-6053-4931-99ea-805a1997d097",
+      "Name": "European Vase",
+      "Category": [
+        "Antiques",
+        "Home Deco"
+      ],
+      "Description": "A beautiful antique European vase from the 19th century.",
+      "ImageFile": "https://asset.bloomnation.com/c_pad,d_vendor:global:catalog:product:image.png,f_auto,fl_preserve_transparency,q_auto,w_1400/v1644275807/vendor/994/catalog/product/2/0/20121117081037_d074453e0a1aaaefa8953d0329044b2c.jpg",
+      "EndingDate": "2024-11-11T13:36:32+00:00",
+      "StartingPrice": 199,
+      "Bids": [
+        {
+          "CustomerId": "abc123",
+          "Price": 250,
+          "Timestamp": "2024-10-30T14:30:00+00:00"
+        },
+        {
+          "CustomerId": "xyz789",
+          "Price": 275,
+          "Timestamp": "2024-10-31T16:00:00+00:00"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "Name": "Vintage Clock",
+      "Category": [
+        "Antiques",
+        "Collectibles"
+      ],
+      "Description": "A vintage clock with intricate designs and functionality.",
+      "ImageFile": "https://m.media-amazon.com/images/I/91RYWEEK50L._AC_UF894,1000_QL80_.jpg",
+      "EndingDate": "2024-12-01T16:45:00+00:00",
+      "StartingPrice": 300,
+      "Bids": [
+        {
+          "CustomerId": "user456",
+          "Price": 310,
+          "Timestamp": "2024-11-01T10:15:00+00:00"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "Name": "Abstract Painting",
+      "Category": [
+        "Art",
+        "Home Deco"
+      ],
+      "Description": "A modern abstract painting for art enthusiasts.",
+      "ImageFile": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCWmEYPvF-4AOxGDybc6qtcLLJlCtxvxnfog&s",
+      "EndingDate": "2024-12-05T09:30:00+00:00",
+      "StartingPrice": 150
+    },
+    {
+      "id": "4",
+      "Name": "Antique Lamp",
+      "Category": [
+        "Antiques",
+        "Lighting"
+      ],
+      "Description": "An antique lamp with a unique glass shade and brass base.",
+      "ImageFile": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3cx5AKoA7kl-eO4I7SwSgfGL5v0H56Fsz8A&s",
+      "EndingDate": "2024-11-25T20:00:00+00:00",
+      "StartingPrice": 120
+    },
+    {
+      "id": "193",
+      "Name": "koi",
+      "Category": "test",
+      "Description": "aaaaaaaa",
+      "ImageFile": "https://www.littlecraft.co.uk/wp-content/uploads/2020/04/wooden-dolphin.jpg",
+      "EndingDate": "2024-11-13T23:34",
+      "StartingPrice": "100"
+    }
+  ]
+}

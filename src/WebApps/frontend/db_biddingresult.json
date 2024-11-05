@@ -1,0 +1,14 @@
+{
+    "contracts": [
+        {
+            "id": "1",
+            "Name": "Sample Contract",
+            "Description": "Details of the contract"
+        },
+        {
+            "id": "2",
+            "Name": "Another Contract",
+            "Description": "Description of the second contract"
+        }
+    ]
+}
