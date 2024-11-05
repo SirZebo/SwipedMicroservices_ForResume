@@ -19,6 +19,9 @@ services:
   contractdb:
     image: postgres
 
+  bidreaddb:
+    image: postgres
+
 # Environement is just to force HTTP, can remove if not needed
   auction.api:
     image: ${DOCKER_REGISTRY-}auctionapi
@@ -78,6 +81,7 @@ services:
 volumes:
   postgres_auction:  
   postgres_contract:
+  postgres_bidread:
 
 
 

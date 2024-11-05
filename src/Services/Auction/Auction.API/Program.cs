@@ -30,6 +30,8 @@ builder.Services.AddMarten(opts =>
     opts.Connection(builder.Configuration.GetConnectionString("Database")!);
 }).UseLightweightSessions();
 
+
+
 builder.Services.AddScoped<IAuctionRepository, AuctionRepository>();
 builder.Services.Decorate<IAuctionRepository, CachedAuctionRepository>();
 builder.Services.AddStackExchangeRedisCache(options =>

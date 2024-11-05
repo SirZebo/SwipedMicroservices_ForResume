@@ -53,6 +53,18 @@ services:
       - "5433:5432"
     volumes:
       - postgres_contract:/var/lib/postgresql/data/
+  
+  bidreaddb:
+    container_name: bidreaddb
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=BidReadDb
+    restart: always
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_bidread:/var/lib/postgresql/data/
 
   messagebroker:
     container_name: messagebroker
@@ -148,6 +160,13 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__Database=Server=bidreaddb;Port=5434;Database=BidReadDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      - MessageBroker__Host=amqp://bidding-mq:5672
+      - MessageBroker__UserName=guest
+      - MessageBroker__Password=guest
+    depends_on:
+      - bidreaddb
+      - messagebroker
     ports:
       - "6002:8080"
       - "6062:8081"

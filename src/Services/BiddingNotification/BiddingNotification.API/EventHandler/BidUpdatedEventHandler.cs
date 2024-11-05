@@ -23,7 +23,7 @@ public class BidUpdatedEventHandler
     {
         return new Bid
         {
-            BidId = message.BidId,
+            Id = message.BidId,
             AuctionId = message.AuctionId,
             CustomerId = message.CustomerId,
             Price = message.Price

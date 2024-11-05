@@ -8,14 +8,13 @@ using System.Text.RegularExpressions;
 namespace BiddingNotification.API.Hubs;
 
 public class BiddingHub
-    (ISender sender)
+    (ISender sender, ILogger<BiddingHub> logger)
     : Hub
 {
 
     public override async Task OnConnectedAsync()
-    {
-        string id = Context.GetHttpContext().Request.Query["id"];
-        id = "58c49479-ec65-4de2-86e7-033c546291aa";
+  {
+        string id = Context?.GetHttpContext()?.GetRouteValue("auctionId") as string;
 
         var connectionId = Context.ConnectionId;
         await Groups.AddToGroupAsync(connectionId, id);
@@ -25,7 +24,7 @@ public class BiddingHub
 
     public override async Task OnDisconnectedAsync(Exception exception)
     {
-        string id = Context.GetHttpContext().Request.Query["id"];
+        string id = Context?.GetHttpContext()?.GetRouteValue("auctionId") as string;
 
         var connectionId = Context.ConnectionId;
         await Groups.RemoveFromGroupAsync(connectionId, id);
@@ -35,18 +34,18 @@ public class BiddingHub
 
     public async Task GetBid()
     {
-        string id = Context.GetHttpContext().Request.Query["id"];
+        string id = Context?.GetHttpContext()?.GetRouteValue("auctionId") as string;
 
         var result = await sender.Send(new GetBidByIdQuery(new Guid(id)));
 
         await Clients.Caller
-            .SendAsync("RecieveBiddingInformation", result.Bid);
+            .SendAsync("GetBid", result.Bid);
     }
 
     public async Task SendSseByAuctionId(Bid bid)
     {
             await Clients.Groups(bid.AuctionId.ToString())
-                .SendAsync("ReceiveSpecificMessage", bid);
+                .SendAsync("SendSseByAuctionId", bid);
     }
 }
 
