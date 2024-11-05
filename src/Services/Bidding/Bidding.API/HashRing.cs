@@ -47,7 +47,7 @@ public class ConsistentHashRing
         }
     }
 
-    public string GetNode(string key)
+    public string? GetNode(string key)
     {
         if (!ring.Any()) return null;
 

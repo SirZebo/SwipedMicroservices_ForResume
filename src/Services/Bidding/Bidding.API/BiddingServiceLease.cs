@@ -1,9 +1,11 @@
 using k8s;
 using k8s.Models;
+using k8s.Exceptions;
+using Microsoft.Rest;
+using System.Net;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-
 
 public class LeaderElection
 {
@@ -13,11 +15,11 @@ public class LeaderElection
     private static readonly int LeaseDurationSeconds = 15;
     private static readonly int RenewIntervalSeconds = 5;
     
-    private readonly Kubernetes _client;
+    private readonly IKubernetes _client;
     private readonly CancellationTokenSource _cancellationTokenSource;
     private bool _isLeader;
 
-    public LeaderElection(Kubernetes client)
+    public LeaderElection(IKubernetes client)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
         _cancellationTokenSource = new CancellationTokenSource();
@@ -26,7 +28,7 @@ public class LeaderElection
 
     public bool IsLeader => _isLeader;
 
-    public async Task StartAsync(Action onBecameLeader = null, Action onLostLeadership = null)
+    public async Task StartAsync(Action? onBecameLeader = null, Action? onLostLeadership = null)
     {
         try
         {
@@ -35,7 +37,7 @@ public class LeaderElection
                 try
                 {
                     var wasLeader = _isLeader;
-                    _isLeader = await TryAcquireOrRenewLease();
+                    _isLeader = await TryAcquireOrRenewLease().ConfigureAwait(false);
 
                     if (_isLeader && !wasLeader)
                     {
@@ -48,19 +50,22 @@ public class LeaderElection
                         onLostLeadership?.Invoke();
                     }
 
-                    await Task.Delay(TimeSpan.FromSeconds(RenewIntervalSeconds), _cancellationTokenSource.Token);
+                    await Task.Delay(TimeSpan.FromSeconds(RenewIntervalSeconds), _cancellationTokenSource.Token)
+                        .ConfigureAwait(false);
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException)
                 {
-                    Console.WriteLine($"Error in leader election loop: {ex.Message}");
+                    Console.WriteLine($"Error in leader election loop: {ex}");
                     _isLeader = false;
-                    await Task.Delay(TimeSpan.FromSeconds(RenewIntervalSeconds), _cancellationTokenSource.Token);
+                    await Task.Delay(TimeSpan.FromSeconds(RenewIntervalSeconds), _cancellationTokenSource.Token)
+                        .ConfigureAwait(false);
                 }
             }
         }
         catch (OperationCanceledException)
         {
             Console.WriteLine("Leader election stopped");
+            throw;
         }
     }
 
@@ -73,48 +78,73 @@ public class LeaderElection
     {
         try
         {
-            V1Lease lease;
+            V1Lease? lease;
             try
             {
-                lease = await _client.ReadNamespacedLeaseAsync(LeaseName, Namespace);
+                lease = await _client.ReadNamespacedLeaseAsync(
+                    name: LeaseName,
+                    namespaceParameter: Namespace,
+                    cancellationToken: _cancellationTokenSource.Token).ConfigureAwait(false);
             }
-            catch{
+            catch (Exception ex) when (ex is HttpOperationException httpEx && 
+                                     httpEx.Response?.StatusCode == HttpStatusCode.NotFound)
+            {
+                // Lease doesn't exist, create it
+                lease = await CreateNewLease().ConfigureAwait(false);
                 return true;
             }
-            // catch (k8s.Models.V1Status status) when (status.Code == 404)
-            // {
-            //     // Lease doesn't exist, create it
-            //     lease = await CreateNewLease();
-            //     return true;
-            // }
 
-            if (lease.Spec.HolderIdentity == HolderIdentity)
+            if (lease == null)
+            {
+                lease = await CreateNewLease().ConfigureAwait(false);
+                return true;
+            }
+
+            if (lease.Spec?.HolderIdentity == HolderIdentity)
             {
                 // We hold the lease, renew it
-                lease.Spec.RenewTime = DateTime.UtcNow;
-                await _client.ReplaceNamespacedLeaseAsync(lease, LeaseName, Namespace);
-                return true;
+                if (lease.Spec != null)
+                {
+                    lease.Spec.RenewTime = DateTime.UtcNow;
+                    await _client.ReplaceNamespacedLeaseAsync(
+                        body: lease,
+                        name: LeaseName,
+                        namespaceParameter: Namespace,
+                        cancellationToken: _cancellationTokenSource.Token).ConfigureAwait(false);
+                    return true;
+                }
             }
 
             // Check if the lease has expired
-            var leaseExpiry = lease.Spec.RenewTime?.AddSeconds(LeaseDurationSeconds) ?? DateTime.MinValue;
+            var leaseExpiry = lease.Spec?.RenewTime?.AddSeconds(lease.Spec?.LeaseDurationSeconds ?? LeaseDurationSeconds) 
+                ?? DateTime.MinValue;
+            
             if (DateTime.UtcNow > leaseExpiry)
             {
                 // Lease has expired, try to take it
+                if (lease.Spec == null)
+                {
+                    lease.Spec = new V1LeaseSpec();
+                }
+                
                 lease.Spec.HolderIdentity = HolderIdentity;
                 lease.Spec.LeaseDurationSeconds = LeaseDurationSeconds;
                 lease.Spec.RenewTime = DateTime.UtcNow;
                 lease.Spec.AcquireTime = DateTime.UtcNow;
 
-                await _client.ReplaceNamespacedLeaseAsync(lease, LeaseName, Namespace);
+                await _client.ReplaceNamespacedLeaseAsync(
+                    body: lease,
+                    name: LeaseName,
+                    namespaceParameter: Namespace,
+                    cancellationToken: _cancellationTokenSource.Token).ConfigureAwait(false);
                 return true;
             }
 
             return false;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            Console.WriteLine($"Error while acquiring/renewing lease: {ex.Message}");
+            Console.WriteLine($"Error while acquiring/renewing lease: {ex}");
             return false;
         }
     }
@@ -137,7 +167,10 @@ public class LeaderElection
             }
         };
 
-        return await _client.CreateNamespacedLeaseAsync(lease, Namespace);
+        return await _client.CreateNamespacedLeaseAsync(
+            body: lease,
+            namespaceParameter: Namespace,
+            cancellationToken: _cancellationTokenSource.Token).ConfigureAwait(false);
     }
 }
 
@@ -147,7 +180,7 @@ public class LeaderProgram
     public static async Task Main(string[] args)
     {
         var config = KubernetesClientConfiguration.InClusterConfig();
-        var client = new Kubernetes(config);
+        IKubernetes client = new Kubernetes(config);
         
         var leaderElection = new LeaderElection(client);
         
@@ -162,6 +195,6 @@ public class LeaderProgram
                 Console.WriteLine("This instance is no longer the leader!");
                 // Stop leader-specific tasks
             }
-        );
+        ).ConfigureAwait(false);
     }
 }
