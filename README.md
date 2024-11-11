@@ -110,6 +110,7 @@ Cross Cutting Concerns
 - Health Check
    - Check if the current service is healthy
    - GET: {{service-url}}/health
+ 
 ![image](https://github.com/user-attachments/assets/078c31d9-0d63-4818-93b1-7aab717864cc)
 ![image](https://github.com/user-attachments/assets/829fa8d3-462f-4497-86d1-e4dd5257a725)
 ![image](https://github.com/user-attachments/assets/deb493d2-9c6b-4329-942e-b6ba9dfaf554)
