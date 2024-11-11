@@ -33,6 +33,7 @@ Scalability: Concurrency
    - If bid is not in use, reader -1
    - If reader == 0 (write)
       - Dispose semaphore
+
 ![image](https://github.com/user-attachments/assets/b8ce8266-fc61-463d-bf74-1b4e13633459)
 
 Scalability: Consistent Hashing
